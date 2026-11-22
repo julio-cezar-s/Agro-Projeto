@@ -12,7 +12,7 @@ html_handling = "none"
 [[d1_databases]]
 binding = "DB"
 database_name = "agropainel-db"
-database_id = "COLOQUE-AQUI-O-ID-DO-D1"
+database_id = "89dd0170-165c-45b5-ac8b-947a3722dfdf"
 migrations_dir = "migrations"
 
 [vars]
