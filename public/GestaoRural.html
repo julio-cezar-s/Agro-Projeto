@@ -1,0 +1,948 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e3b24">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Agro Projeto">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Gestão Rural</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230e3b24'/%3E%3Cpath d='M118 168c-46-8-70-48-62-92 24 34 58 50 100 54M394 168c46-8 70-48 62-92-24 34-58 50-100 54' fill='none' stroke='%23ffffff' stroke-width='24' stroke-linecap='round'/%3E%3Cellipse cx='110' cy='214' rx='44' ry='20' transform='rotate%2824 110 214%29' fill='%23ffffff'/%3E%3Cellipse cx='402' cy='214' rx='44' ry='20' transform='rotate%28-24 402 214%29' fill='%23ffffff'/%3E%3Cpath d='M168 150h176l-22 170c-5 42-32 84-66 84s-61-42-66-84z' fill='%23ffffff'/%3E%3Ccircle cx='222' cy='230' r='13' fill='%230e3b24'/%3E%3Ccircle cx='290' cy='230' r='13' fill='%230e3b24'/%3E%3Cpath d='M214 352h84' stroke='%232e8b57' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M70 452h372' stroke='%232e8b57' stroke-width='22' stroke-linecap='round'/%3E%3C/svg%3E">
+<style>
+:root{--g1:#0e3b24;--g2:#2e8b57;--bg:#ffffff;--earth:#5b8a6b;--sand:#e6f1e8;--ink:#14231a;--red:#b3422f}
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+h1,h2,h3{font-family:Georgia,serif;margin:.2em 0 .5em}
+#nav{width:220px;background:var(--g1);color:#fff;padding:20px 12px;position:sticky;top:0;height:100vh}
+#nav h1{font-size:1.3rem;padding:0 8px 16px}#nav nav{display:flex;flex-direction:column;gap:4px}
+#nav button{background:none;border:0;color:#d9e6cf;text-align:left;padding:12px;border-radius:8px;font-size:1rem}
+#nav button[aria-current]{background:var(--g2);color:#fff}
+main{flex:1;padding:24px;max-width:1000px;min-width:0}
+button,select,input,textarea{font:inherit}
+button{cursor:pointer;border:1px solid var(--earth);background:#fff;border-radius:8px;padding:8px 12px;color:var(--ink)}
+button.pri,.btn{background:var(--g1);color:#fff;border-color:var(--g1)}.btn{display:inline-flex;align-items:center;box-sizing:border-box;min-height:40px;font:inherit;line-height:1.25;border:1px solid var(--g1);padding:8px 12px;border-radius:8px;cursor:pointer}.btn:focus-visible{outline:3px solid var(--g2);outline-offset:2px}
+input,select,textarea{border:1px solid #bdb39f;border-radius:8px;padding:8px;background:#fff;width:100%}
+.bar2{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}.bar2 input{flex:1;min-width:160px}.bar2 select{width:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.card{background:#fff;border-left:5px solid var(--g2);border-radius:8px;padding:12px}.card b{font:700 2rem Georgia,serif;display:block}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-top:16px}
+section{background:#fff;border-radius:8px;padding:14px}
+.bar{display:grid;grid-template-columns:90px 1fr 30px;align-items:center;gap:8px}.bar i{height:12px;background:var(--g2);border-radius:6px}
+.alert{background:#f7e3b5;border-left:5px solid #c8963e;padding:10px;margin:12px 0;border-radius:8px}
+.tw{overflow-x:auto;background:#fff;border-radius:8px}table{width:100%;border-collapse:collapse}
+th,td{padding:8px;text-align:left;border-bottom:1px solid var(--sand);white-space:nowrap}th button{border:0;background:none;padding:0;font-weight:700}
+.act{display:flex;gap:6px}.act button{padding:4px 8px;font-size:.85rem}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cal b{text-align:center}
+.day{min-height:70px;text-align:left;padding:4px;overflow:hidden;display:flex;flex-direction:column;gap:2px;font-size:.85rem}
+.day.out{opacity:.5}.day.today{border:2px solid var(--g2)}.day.sel{background:var(--sand)}
+.day i{font-style:normal;font-size:.7rem;background:var(--earth);color:#fff;border-radius:3px;padding:0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.day i.Alta{background:var(--red)}.day i.ok{background:var(--g2)}
+.ev,.note{background:#fff;border-radius:8px;padding:10px;margin:8px 0;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.note{display:block}.ev.done b{text-decoration:line-through}small{display:block;color:#665}.cap{text-transform:capitalize;flex:1;text-align:center}
+dialog{border:0;border-radius:12px;padding:20px;width:min(560px,94vw);max-height:90vh}dialog::backdrop{background:#0008}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:.9rem}.full{grid-column:1/-1}
+.row{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.err{color:var(--red)}
+.cards2{display:flex;gap:8px;flex-wrap:wrap}.empty{color:#776;padding:8px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--g1);color:#fff;padding:8px 16px;border-radius:20px;opacity:0;transition:opacity .2s;pointer-events:none}#toast.on{opacity:1}
+:focus-visible{outline:3px solid #c8963e;outline-offset:2px}
+@media(max-width:800px){#nav{width:100%;height:auto;position:fixed;bottom:0;left:0;z-index:5;padding:4px}#nav h1{display:none}
+#nav nav{flex-direction:row;overflow-x:auto}#nav button{padding:10px 12px;white-space:nowrap}main{padding:14px 12px 80px}
+.grid{grid-template-columns:1fr}.day{min-height:52px;font-size:.8rem}.day i{font-size:0;height:6px;padding:0}}
+@media print{#nav,.bar2,.act,.alert button{display:none}body{display:block}main{max-width:none;padding:0}}
+.note2{color:#665;font-size:.9rem}.warn td{background:#fbe9c6}.bar2 input[type=date]{flex:0 0 150px;min-width:0}#nav{overflow-y:auto}
+@media(max-width:800px){#nav nav{overflow-x:auto}#nav button{flex:0 0 auto;min-width:68px}}
+
+html{-webkit-text-size-adjust:100%}body{-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none}
+#nav button{display:flex;align-items:center;gap:10px;min-height:44px}button,select,input{min-height:40px}.logo{vertical-align:middle;margin-right:6px}
+@media(max-width:800px){#nav{padding:4px 4px calc(4px + env(safe-area-inset-bottom));box-shadow:0 -2px 8px #0003}#nav nav{overflow:visible}
+#nav button{flex:1;flex-direction:column;gap:2px;font-size:.72rem;padding:6px 2px;justify-content:center;text-align:center}
+main{padding:calc(14px + env(safe-area-inset-top)) 12px calc(84px + env(safe-area-inset-bottom))}#toast{bottom:calc(90px + env(safe-area-inset-bottom))}}
+h1,h2,h3{font-family:inherit;letter-spacing:-.01em}h2{color:var(--g1);font-size:1.5rem}.card b{font:700 2rem/1.1 system-ui,sans-serif;color:var(--g1)}
+section,.card,.ev,.note,.tw,.alert{border:1px solid #dbe8de}.alert{border-left:5px solid #c8963e}.card{border-left:5px solid var(--g2)}
+#nav{background:linear-gradient(180deg,#0e3b24,#0a2c1a)}#nav h1{display:flex;align-items:center;gap:10px;font-size:1.2rem;font-weight:700}#nav .logo{margin:0}
+#nav button{color:#cfe6d6}#nav button[aria-current]{background:#2e8b57;color:#fff}
+th{color:var(--g1);background:#f1f7f2}.day.sel{background:#e6f1e8}button:hover{background:#f1f7f2}button.pri:hover,.btn:hover{background:#14532d;color:#fff}
+#top{display:none}#top .logo{margin:0}
+@media(max-width:800px){body{flex-direction:column}#top{display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:4;background:#0e3b24;color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px}#top b{font-size:1.1rem}#top span{margin-left:auto;font-size:.9rem;color:#cfe6d6}main{padding-top:14px}}
+@media print{#top{display:none}}
+@media(max-width:800px){#nav{top:auto;height:auto;max-height:none}#nav h1{display:none}#nav nav{overflow-x:auto;scrollbar-width:none}#nav button{flex:0 0 auto;min-width:70px}}
+.lots{margin:12px 0}.pill{display:inline-block;background:var(--sand);border-radius:12px;padding:0 8px;font-size:.8rem}
+
+.rs{margin:12px 0}.af{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:10px}
+.tabs{display:flex;gap:6px;margin:10px 0 12px;flex-wrap:wrap}.tabs button[aria-pressed=true]{background:var(--g1);color:#fff;border-color:var(--g1)}
+.hb{display:grid;grid-template-columns:minmax(90px,38%) 1fr auto;align-items:center;gap:8px;margin:6px 0;font-size:.9rem}.hb>span{min-width:0;overflow-wrap:anywhere}
+.hb .tr{position:relative;height:16px;background:#eef5ef;border-radius:6px}.hb .fill{position:absolute;top:0;bottom:0;background:var(--g2);border-radius:6px;min-width:2px}.hb .fill.neg{background:var(--red)}
+.chart{width:100%;max-width:640px;height:auto;display:block}.chart text{font:13px system-ui,sans-serif;fill:#445}
+.fc{display:flex;gap:8px;overflow-x:auto;padding:4px 0}.fm{flex:0 0 auto;min-width:46px;text-align:center}.fb{height:140px;display:flex;align-items:flex-end;justify-content:center;gap:3px;border-bottom:1px solid #bdb39f}
+.fb i{width:18px;min-height:1px;border-radius:3px 3px 0 0}.fb i.r{background:var(--g2)}.fb i.d{background:var(--red)}
+.leg{display:flex;gap:14px;flex-wrap:wrap;font-size:.85rem;margin:6px 0}.leg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.inds{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0}
+.ind{background:#fff;border:1px solid #dbe8de;border-left:5px solid var(--g2);border-radius:8px;padding:10px}.ind h4{margin:0 0 4px;font-size:.95rem;color:var(--g1)}
+.ind b{font:700 1.8rem/1.1 system-ui,sans-serif;color:var(--g1);display:block}.ind .fx{font-size:.78rem}.ind .w{color:#8a5a00;font-weight:600;font-size:.8rem}
+@media print{.tabs,.af{display:none}}
+.card{min-width:0}.card b{font-size:clamp(1.2rem,6vw,2rem);overflow-wrap:anywhere}.hb>*{min-width:0}.ind b{overflow-wrap:anywhere}
+
+/* Ajustes de leitura e toque em telas pequenas */
+:root{scrollbar-gutter:stable}
+img,svg,canvas{max-width:100%}
+main{min-width:0;overflow-wrap:anywhere}
+h1,h2,h3,h4,p,small,label,.note2,.empty{overflow-wrap:anywhere;word-break:normal}
+button,select,input,textarea{max-width:100%;min-width:0}
+button{line-height:1.25;white-space:normal;overflow-wrap:anywhere}
+.bar2>*{min-width:0}
+.tw{max-width:100%;overscroll-behavior-x:contain}
+table{min-width:100%}
+td,th{overflow-wrap:anywhere}
+dialog{max-width:calc(100vw - 20px);overflow:auto}
+td.sit-late{color:var(--red);font-weight:700}td.sit-pend{color:#8a5a00;font-weight:600}td.sit-done{color:#1f6b3f}td.sit-reg{color:#555}
+.card.est{border-left-style:dashed}.card small{display:block;color:#665;font-size:.78rem;margin-top:2px;font-weight:400}.card .tg{display:inline-block;background:#fbe9c6;color:#6b4a00;border-radius:10px;padding:0 7px;font-size:.7rem;margin-left:6px;vertical-align:middle}
+[aria-invalid="true"]{border-color:var(--red)!important;outline:2px solid var(--red);outline-offset:0}.err{font-weight:600}
+.rnote{background:#f3f8f4;border:1px solid #dbe8de;border-radius:8px;padding:8px 10px;margin:0 0 10px;font-size:.88rem;color:#334}
+#toast{top:auto;right:auto;margin:0;border:0;overflow:visible;width:max-content}#toast.top{bottom:auto;top:calc(12px + env(safe-area-inset-top))}
+.sortm{display:none}@media(max-width:800px){.sortm{display:block}}
+dialog .row{position:sticky;bottom:-20px;background:#fff;padding:10px 0 4px;margin-bottom:-20px}
+@media(max-width:800px){
+  body{width:100%;min-width:0}
+  main{width:100%;max-width:none;padding-left:12px;padding-right:12px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .card{padding:10px;min-width:0}
+  .card b{font-size:clamp(1.15rem,5vw,1.65rem)}
+  .two,.inds{grid-template-columns:minmax(0,1fr);gap:10px}
+  section{padding:11px;min-width:0}
+  .bar2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}.bar2 select{grid-column:1/-1}
+  .bar2 input,.bar2 select,.bar2 button{width:100%;min-width:0;flex:auto}
+  .bar2 input:first-child{grid-column:1/-1}
+  .bar2 input[type=date]{width:100%;min-width:0;flex:auto}
+  .bar2>span{align-self:center}
+  .bar2 .rep-q{grid-column:1/-1}
+  .bar2.cal-nav{grid-template-columns:56px minmax(0,1fr) 56px}.cal-nav strong{text-align:center}.cal-nav>.pri{grid-column:1/-1}
+  .grid{grid-template-columns:minmax(0,1fr)}
+  .full{grid-column:auto}
+  .row{flex-wrap:wrap}
+  .row button{flex:1 1 120px}
+  .tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tabs button{width:100%}
+  .cal{gap:2px}
+  .day{min-width:0;padding:2px;font-size:.72rem}
+  .day b{font-size:.7rem}
+  .ev{align-items:flex-start}
+  .ev>*{min-width:0;max-width:100%}
+  .hb{grid-template-columns:minmax(0,1fr) auto;gap:5px}
+  .hb .tr{grid-column:1/-1;grid-row:2}
+  /* Tabelas viram cartões: não é mais necessário arrastar para ler cada coluna. */
+  .tw{overflow:visible;background:transparent}
+  .tw table,.tw tbody{display:block;width:100%;min-width:0}
+  .tw thead{display:none}
+  .tw tbody tr{display:block;background:#fff;border:1px solid #dbe8de;border-radius:10px;margin:0 0 10px;padding:8px;min-width:0}
+  .tw tbody td{display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr);gap:8px;white-space:normal;overflow-wrap:anywhere;padding:7px 4px;border-bottom:1px solid #edf3ee;min-width:0}
+  .tw tbody td:last-child{border-bottom:0}
+  .tw tbody td:before{content:attr(data-label);font-weight:650;color:var(--g1);font-size:.82rem;overflow-wrap:anywhere}
+  .tw tbody td.act{display:flex;flex-wrap:wrap;gap:6px;padding-top:9px}
+  .tw tbody td.act:before{content:"Ações";flex:0 0 100%}
+  .tw tbody td.act button{flex:1 1 auto;min-height:42px}
+  .tw tbody td:empty{display:none}
+  .tw tbody td[data-label=""]:not(.act){display:none}
+  .tw tbody tr td[colspan]{display:block}
+  .tw tbody tr td[colspan]:before{content:none}
+  .lots .tw tbody td{grid-template-columns:minmax(0,42%) minmax(0,1fr)}
+  #nav nav{justify-content:flex-start;overflow-x:auto;overscroll-behavior-x:contain}
+  #nav button{flex:0 0 72px;min-width:72px;min-height:56px}
+  #toast{max-width:calc(100vw - 28px);text-align:center}
+  .fc{max-width:100%}
+  .chart{max-width:100%}
+}
+@media(max-width:380px){
+  main{padding-left:8px;padding-right:8px}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tw tbody td{grid-template-columns:minmax(0,34%) minmax(0,1fr);gap:6px;font-size:.92rem}
+  #nav button{flex-basis:66px;min-width:66px;font-size:.68rem}
+}
+/* acesso discreto ao Agro Projeto: no computador fica no menu lateral; no celular, numa faixa fina acima do topo */
+.agro-back{display:none;align-items:center;text-decoration:none;font-size:.85rem}
+.agro-back[hidden]{display:none!important}
+.agro-back:focus-visible{outline:2px solid #cfe6d6;outline-offset:2px;border-radius:6px}
+#nav .agro-back-d{display:flex;position:absolute;top:0;left:12px;height:24px;padding:0 8px;font-size:.75rem;border-radius:6px;color:#9fc4ac}
+#nav .agro-back-d:hover{color:#fff;background:#ffffff14}
+@media(max-width:800px){#nav .agro-back-d{display:none}
+.agro-back-m{display:flex;min-height:34px;padding:calc(4px + env(safe-area-inset-top)) 14px 4px;background:#0a2c1a;color:#b9d6c3;font-size:.8rem}}
+@media print{.agro-back{display:none!important}}
+/* Fase 3 (mobile): leitura, toque e formulários */
+.ok-btn{min-height:30px;padding:0 12px}
+.card small{font-size:.8rem}.ind .fx{font-size:.8rem}.card .tg{font-size:.75rem}
+@media(max-width:800px){
+  /* campos com 16 px: o iOS não amplia a tela ao focar (os que ficam dentro de label herdavam .9rem) */
+  input:not([type=checkbox]):not([type=radio]),select,textarea{font-size:16px}
+  /* alvos de toque de pelo menos 44 px */
+  button,select,input:not([type=checkbox]):not([type=radio]),.btn{min-height:44px}
+  .tw tbody td.act button{min-height:44px}
+  .ok-btn{min-height:44px;padding:0 16px}
+  .agro-back-m{min-height:44px}
+  .tabs button,.day{min-height:44px}
+  .day{min-height:52px}
+  /* textos nunca abaixo de 12 px */
+  #nav button{font-size:.75rem}
+  .day,.day b{font-size:.75rem}
+}
+@media(max-width:380px){#nav button{font-size:.75rem}}
+</style></head>
+<body>
+<a class="agro-back agro-back-m" href="./">← Agro Projeto</a><header id="top"><svg class="logo" viewBox="0 0 512 512" width="30" height="30" aria-hidden="true"><rect width='512' height='512' rx='96' fill='#0e3b24'/><path d='M118 168c-46-8-70-48-62-92 24 34 58 50 100 54M394 168c46-8 70-48 62-92-24 34-58 50-100 54' fill='none' stroke='#ffffff' stroke-width='24' stroke-linecap='round'/><ellipse cx='110' cy='214' rx='44' ry='20' transform='rotate(24 110 214)' fill='#ffffff'/><ellipse cx='402' cy='214' rx='44' ry='20' transform='rotate(-24 402 214)' fill='#ffffff'/><path d='M168 150h176l-22 170c-5 42-32 84-66 84s-61-42-66-84z' fill='#ffffff'/><circle cx='222' cy='230' r='13' fill='#0e3b24'/><circle cx='290' cy='230' r='13' fill='#0e3b24'/><path d='M214 352h84' stroke='#2e8b57' stroke-width='18' stroke-linecap='round'/><path d='M70 452h372' stroke='#2e8b57' stroke-width='22' stroke-linecap='round'/></svg><b>Gestão Rural</b><span id="vt"></span></header>
+<aside id="nav"><h1><svg class="logo" viewBox="0 0 512 512" width="30" height="30" aria-hidden="true"><rect width='512' height='512' rx='96' fill='#0e3b24'/><path d='M118 168c-46-8-70-48-62-92 24 34 58 50 100 54M394 168c46-8 70-48 62-92-24 34-58 50-100 54' fill='none' stroke='#ffffff' stroke-width='24' stroke-linecap='round'/><ellipse cx='110' cy='214' rx='44' ry='20' transform='rotate(24 110 214)' fill='#ffffff'/><ellipse cx='402' cy='214' rx='44' ry='20' transform='rotate(-24 402 214)' fill='#ffffff'/><path d='M168 150h176l-22 170c-5 42-32 84-66 84s-61-42-66-84z' fill='#ffffff'/><circle cx='222' cy='230' r='13' fill='#0e3b24'/><circle cx='290' cy='230' r='13' fill='#0e3b24'/><path d='M214 352h84' stroke='#2e8b57' stroke-width='18' stroke-linecap='round'/><path d='M70 452h372' stroke='#2e8b57' stroke-width='22' stroke-linecap='round'/></svg>Gestão Rural</h1><a class="agro-back agro-back-d" href="./">← Agro Projeto</a><nav aria-label="Menu principal"></nav></aside>
+<main id="app" tabindex="-1"></main>
+<dialog id="dlg"></dialog><div id="toast" role="status" popover="manual"></div>
+<script>
+'use strict';
+/* Gestão Rural — dados em localStorage (chave versionada). Para backend futuro, troque load()/save(). */
+const $=(s,e=document)=>e.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0'),fmt=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const br=s=>!s?'—':/^\d{4}-\d{2}-\d{2}$/.test(String(s))?String(s).split('-').reverse().join('/'):esc(String(s)),uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const empty=m=>`<p class="empty">${m}</p>`,byDate=(a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''));
+const KEY='nelore.v1',KEYS=['animals','events','notes','repro','sanit','pasto','estoque','fin','excluidos'],blank=()=>{const o={version:1};KEYS.forEach(k=>o[k]=[]);return o};
+/* E10: peso válido = número (ou texto numérico) maior que 0 e até 2000 kg; nulo, vazio, texto ou fora da faixa NUNCA vira 0 */
+const wkg=v=>{const n=typeof v==='number'?v:typeof v==='string'&&/^\s*\d+([.,]\d+)?\s*$/.test(v)?parseFloat(v.replace(',','.')):NaN;return isFinite(n)&&n>0&&n<=2000?n:null};
+const wRaw=v=>v==null?'nulo':typeof v==='string'?(v.trim()===''?'vazio':'"'+v.slice(0,20)+'"'):String(v).slice(0,20);
+let lastFill=null;
+/* E9: os IDs originais são mantidos exatamente como vieram (só viram texto). Só quem repete um ID já usado (ou não tem ID) recebe ID novo; vínculos de genealogia/touro são mantidos ou redirecionados pelo brinco. Relatório do que mudou em lastFill. */
+/* pm: id original de cada pasto → id final. Animais citam o id ORIGINAL; se dois pastos tinham o mesmo id, o nome do lote desempata. am: o mesmo para animais (desempate pelo brinco escrito em mãe/pai/touro). */
+function fill(d){const pm={},am={},nz=s=>String(s??'').trim().replace(/\s+/g,' ').toLowerCase(),idOk=v=>(typeof v==='string'&&v.trim()!=='')||(typeof v==='number'&&isFinite(v)),
+ R=lastFill={dups:{},newId:0,moved:0,amb:0,dangling:0,cross:0,wDrop:[],wCur:[]};
+ KEYS.forEach(k=>{if(!Array.isArray(d[k]))d[k]=[];const all=new Set(d[k].filter(x=>idOk(x.id)).map(x=>String(x.id))),seen=new Set();d[k].forEach(x=>{const orig=idOk(x.id)?String(x.id):null;let id=orig;
+  if(id===null){do{id=uid()}while(all.has(id)||seen.has(id));R.newId++}
+  else if(seen.has(id)){let i=1,n;do{n=id+'-dup'+i++}while(all.has(n)||seen.has(n));id=n;R.dups[k]=(R.dups[k]||0)+1}
+  seen.add(id);x.id=id;
+  if(k==='pasto'&&orig!==null)(pm[orig]=pm[orig]||[]).push({id,nome:x.nome});
+  if(k==='animals'&&orig!==null)(am[orig]=am[orig]||[]).push({id,tag:x.tag});
+  if(['events','notes','repro','sanit','fin'].includes(k))x.date=x.date==null?'':String(x.date)})});
+ const ref=(h,f,txt,del)=>{const v=h[f];if(!idOk(v)){if(del)delete h[f];return}const s=String(v),c=am[s];h[f]=s;
+  if(c&&c.length>1){const m=c.filter(z=>nz(z.tag)===nz(txt));if(m.length===1){if(m[0].id!==s){h[f]=m[0].id;R.moved++}}else R.amb++}};
+ const normA=a=>{a.tag=String(a.tag);ref(a,'motherId',a.mother,true);ref(a,'fatherId',a.father,true);
+  const raw=Array.isArray(a.weights)?a.weights:[],ok=[];
+  raw.forEach(w=>{const kg=isObj(w)?w.kg:undefined,why=!isObj(w)?'registro inválido':kg==null||(typeof kg==='string'&&kg.trim()==='')?'peso '+wRaw(kg):wkg(kg)===null?'peso inválido ('+wRaw(kg)+')':(w.date==null||String(w.date).trim()==='')?'sem data':'';
+   if(why)R.wDrop.push({tag:a.tag,date:isObj(w)&&w.date!=null?String(w.date):'',why});else ok.push({date:String(w.date),kg:wkg(kg)})});
+  a.weights=ok;
+  if('weight' in a&&a.weight!==undefined&&a.weight!==''){const k=wkg(a.weight);if(k===null){R.wCur.push({tag:a.tag,why:wRaw(a.weight)});a.weight=''}else a.weight=k}
+  if(a.lotId!=null&&a.lotId!==''){a.lotId=String(a.lotId);const c=pm[a.lotId];if(c&&c.length)a.lotId=(c.length>1?(c.find(z=>nz(z.nome)===nz(a.lot))||c[0]).id:c[0].id)}};
+ d.animals.forEach(normA);d.excluidos.forEach(e=>{if(isObj(e.animal)){if(idOk(e.animal.id))e.animal.id=String(e.animal.id);else{e.animal.id=uid();R.newId++}normA(e.animal)}});
+ d.repro.forEach(r=>ref(r,'touroId',r.touro,false));
+ const ids=new Set([...d.animals.map(a=>a.id),...d.excluidos.filter(e=>isObj(e.animal)).map(e=>e.animal.id)]),act=new Set(d.animals.map(a=>a.id));
+ d.excluidos.forEach(e=>{if(isObj(e.animal)&&act.has(e.animal.id))R.cross++});
+ [...d.animals,...d.excluidos.filter(e=>isObj(e.animal)).map(e=>e.animal)].forEach(a=>['motherId','fatherId'].forEach(f=>{if(a[f]!=null&&!ids.has(a[f]))R.dangling++}));
+ d.repro.forEach(r=>{if(r.touroId!=null&&r.touroId!==''&&!ids.has(String(r.touroId)))R.dangling++});
+ return d}
+/* relatório em texto simples (usa esc() ao ir para a tela) */
+function fillMsg(R){const L=[],NM={animals:'animais',events:'compromissos',notes:'anotações',repro:'reprodução',sanit:'sanidade',pasto:'pastos',estoque:'estoque',fin:'financeiro',excluidos:'excluídos'},nd=Object.values(R.dups).reduce((s,v)=>s+v,0);
+ if(nd)L.push('IDs repetidos: '+nd+' registro(s) ('+Object.entries(R.dups).map(([k,v])=>(NM[k]||k)+' '+v).join(', ')+') ficaram com ID novo; os demais IDs originais foram mantidos.'+(R.moved?' '+R.moved+' vínculo(s) de genealogia/touro foram redirecionados pelo brinco.':'')+(R.amb?' '+R.amb+' vínculo(s) apontam para um ID repetido e não puderam ser distinguidos: ficam no primeiro registro com esse ID; confira.':''));
+ if(R.newId)L.push(R.newId+' registro(s) sem ID válido receberam um ID novo.');
+ if(R.dangling)L.push(R.dangling+' vínculo(s) de genealogia ou touro apontam para um ID que não existe nos dados; foram mantidos como vieram.');
+ if(R.cross)L.push(R.cross+' animal(is) excluído(s) têm o mesmo ID de um animal ativo (a restauração gera um ID novo se necessário).');
+ if(R.wDrop.length)L.push(R.wDrop.length+' pesagem(ns) com peso nulo, vazio ou inválido (ou sem data) não foram importadas; nenhuma virou 0 kg. Ex.: '+R.wDrop.slice(0,3).map(w=>'brinco '+w.tag+(w.date?' ('+w.date+')':'')+': '+w.why).join('; ')+(R.wDrop.length>3?'…':'')+'.');
+ if(R.wCur.length)L.push(R.wCur.length+' peso(s) atual(is) nulo(s) ou inválido(s) ficaram como “não informado”, não como 0 kg. Ex.: '+R.wCur.slice(0,3).map(w=>'brinco '+w.tag+': '+w.why).join('; ')+(R.wCur.length>3?'…':'')+'.');
+ if(R.wDrop.length||R.wCur.length)L.push('Os valores originais continuam no arquivo de backup, que não foi alterado.');
+ return L}
+const isObj=x=>!!x&&typeof x==='object'&&!Array.isArray(x);
+const valid=d=>isObj(d)&&d.version===1&&['animals','events','notes'].every(k=>Array.isArray(d[k]))&&d.animals.every(a=>isObj(a)&&a.tag!=null&&String(a.tag).trim()!=='')&&KEYS.every(k=>d[k]===undefined||(Array.isArray(d[k])&&d[k].every(isObj)))&&(d.excluidos===undefined||d.excluidos.every(e=>isObj(e.animal)&&e.animal.tag!=null&&String(e.animal.tag).trim()!==''));
+let recovered=false,recRaw=null,loadedRaw=null,stale=false,dirtyTab=false;
+function load(){let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}loadedRaw=raw;
+ try{const d=JSON.parse(raw);if(valid(d))return fill(d)}catch(e){}
+ if(raw){recovered=true;recRaw=raw;try{const ks=[];for(let i=0;i<localStorage.length;i++){const n=localStorage.key(i);if(n&&n.indexOf(KEY+'.bak')===0)ks.push(n)}if(!ks.some(n=>localStorage.getItem(n)===raw))localStorage.setItem(ks.length?KEY+'.bak-'+Date.now():KEY+'.bak',raw)}catch(e){}}
+ return blank()}
+let S=load();const bootMsg=lastFill?fillMsg(lastFill):[];
+let OSC=null;
+/* Proteção contra duas abas: loadedRaw = texto exato de "nelore.v1" que esta aba leu/gravou por último. Se o armazenamento já for outro, outra aba gravou: bloqueia, sem mesclar. */
+const STALE_MSG='Os dados foram alterados em outra aba deste navegador. Nada foi salvo nesta aba, para não apagar o que a outra salvou. Use “Recarregar dados atualizados”.';
+const readStore=()=>{try{return{ok:true,v:localStorage.getItem(KEY)}}catch(e){return{ok:false,v:null}}};
+/* se esta aba já gravou algo e outra aba mexeu em seguida (janela de poucos ms em que a checagem não enxerga a outra aba), guarda cópia do último estado gravado por esta aba */
+function keepCopy(){if(dirtyTab&&loadedRaw)try{localStorage.setItem(KEY+'.aba-desatualizada',loadedRaw)}catch(e){}}
+function markStale(){if(stale)return;stale=true;keepCopy();render();toast(STALE_MSG,9000)}
+function isStale(){const c=readStore();if(c.ok&&c.v!==loadedRaw){markStale();toast(STALE_MSG,9000);return true}return false}
+function save(){OSC=null;const c=readStore();
+ if(c.ok&&c.v!==loadedRaw){if(!stale){stale=true;keepCopy();setTimeout(render,0)}toast(STALE_MSG,9000);return false}
+ try{const s=JSON.stringify(S);localStorage.setItem(KEY,s);loadedRaw=s;stale=false;dirtyTab=true;return true}catch(e){toast('Não foi possível salvar: o navegador recusou a gravação (armazenamento cheio ou bloqueado). A alteração foi desfeita; exporte um backup assim que possível.',7000);return false}}
+let tm;function toast(m,ms=2500){const t=$('#toast');t.textContent=m;t.classList.toggle('top',!!$('#dlg').open);
+ try{if(t.showPopover&&!t.matches(':popover-open'))t.showPopover()}catch(e){}
+ t.classList.add('on');clearTimeout(tm);tm=setTimeout(()=>{t.classList.remove('on');try{if(t.hidePopover&&t.matches(':popover-open'))t.hidePopover()}catch(e){}},ms)}
+/* tx: aplica a alteração, grava e, se a gravação falhar (ou a função devolver false), volta ao estado anterior para a tela nunca mostrar algo não salvo */
+function tx(fn){const snap=JSON.stringify(S);let r;try{r=fn()}catch(e){S=JSON.parse(snap);toast('Erro ao aplicar a alteração; nada foi salvo.',5000);return false}
+ if(r===false){S=JSON.parse(snap);return false}if(save())return true;S=JSON.parse(snap);return false}
+const r6=v=>Math.round(v*1e6)/1e6;
+
+const CATS=['Vacinação','Vermifugação','Reprodução','IATF','Diagnóstico de gestação','Nascimento','Desmama','Pesagem','Mudança de pasto','Compra','Venda','Manutenção','Tarefa geral'];
+const ST=['Ativo','Vendido','Morto','Transferido'];
+const ENT={
+animals:{n:'animal',f:[{k:'tag',l:'Brinco / identificação',r:1},{k:'name',l:'Nome (opcional)'},{k:'sex',l:'Sexo',o:['Fêmea','Macho']},
+{k:'cat',l:'Categoria',o:['Matriz','Touro','Novilha','Bezerro','Bezerra','Garrote','Boi','Outro']},{k:'birth',l:'Nascimento',t:'date'},
+{k:'breed',l:'Raça'},{k:'regNum',l:'Número de registro'},{k:'origin',l:'Origem do animal'},{k:'entry',l:'Data de entrada na fazenda',t:'date'},{k:'coat',l:'Cor da pelagem'},
+{k:'weight',l:'Peso atual (kg)',t:'number',pos:1},{k:'wdate',l:'Data da pesagem',t:'date'},{k:'lot',l:'Lote / pasto'},{k:'status',l:'Situação',o:ST},{k:'exit',l:'Data da saída (venda, morte ou transferência)',t:'date'},{k:'buyer',l:'Comprador'},{k:'deathCause',l:'Causa da morte'},{k:'destination',l:'Destino da transferência'},{k:'mother',l:'Mãe'},{k:'father',l:'Pai'},
+{k:'notes',l:'Observações',t:'textarea'}]},
+events:{n:'compromisso',f:[{k:'title',l:'Título',r:1},{k:'date',l:'Data',t:'date',r:1},{k:'time',l:'Horário',t:'time'},{k:'cat',l:'Categoria',o:CATS},
+{k:'lot',l:'Fazenda, pasto ou lote'},{k:'prio',l:'Prioridade',o:['Baixa','Média','Alta']},{k:'status',l:'Status',o:['Pendente','Concluído']},
+{k:'remind',l:'Lembrete (dias antes)',t:'number'},{k:'notes',l:'Descrição e observações',t:'textarea'}]},
+notes:{n:'anotação',f:[{k:'title',l:'Título',r:1},{k:'date',l:'Data',t:'date',r:1},{k:'cat',l:'Categoria',o:['Diário de campo','Manejo','Pasto','Clima','Outro']},
+{k:'rel',l:'Animal, lote ou pasto'},{k:'tags',l:'Tags (separe por vírgula)'},{k:'text',l:'Texto',t:'textarea',r:1}]}};
+const DEF={animals:{sex:'Fêmea',cat:'Matriz',status:'Ativo'},events:{cat:'Tarefa geral',prio:'Média',status:'Pendente'},notes:{cat:'Diário de campo'}};
+
+/* ===== Rebanho · Etapa 1: idade, sexo×categoria, genealogia e saída ===== */
+const CATSEX={Matriz:'Fêmea',Novilha:'Fêmea',Bezerra:'Fêmea',Touro:'Macho',Bezerro:'Macho',Garrote:'Macho',Boi:'Macho'};
+const catOk=(c,sx)=>!CATSEX[c]||CATSEX[c]===sx;
+const catsFor=sx=>ENT.animals.f.find(f=>f.k==='cat').o.filter(c=>catOk(c,sx));
+const ageInfo=(birth,ref)=>{const p=v=>/^\d{4}-\d{2}-\d{2}$/.test(String(v||''))?String(v).split('-').map(Number):null,b=p(birth),r=p(ref);if(!b||!r)return null;let m=(r[0]-b[0])*12+(r[1]-b[1]);if(r[2]<b[2])m--;if(m<0)return null;return{m,days:Math.round((Date.UTC(r[0],r[1]-1,r[2])-Date.UTC(b[0],b[1]-1,b[2]))/864e5)}};
+const ageStr=i=>{if(!i)return'';if(i.m<1)return i.days+(i.days===1?' dia':' dias');if(i.m<24)return i.m+(i.m===1?' mês':' meses');const y=Math.floor(i.m/12),r=i.m%12;return y+' anos'+(r?' e '+r+(r===1?' mês':' meses'):'')};
+const ageOf=a=>{const off=a.status&&a.status!=='Ativo'&&a.exit,t=ageStr(ageInfo(a.birth,off?a.exit:fmt(new Date())));return t?t+(off?' na saída':''):''};
+const catSug=(sx,birth,tag,ref)=>{const i=ageInfo(birth,ref);if(sx==='Fêmea'){if(tag&&S.repro.some(x=>nrm(x.animal)===nrm(tag)&&x.tipo==='Parto/nascimento'))return'Matriz';return i?(i.m<12?'Bezerra':i.m<24?'Novilha':'Matriz'):''}if(sx==='Macho')return i?(i.m<12?'Bezerro':i.m<24?'Garrote':'Boi'):'';return''};
+const lastWDate=a=>{const w=sortW(a);return w.length?w[w.length-1].date:''};
+const parentRef=(a,k)=>{const sx=k==='mother'?'Fêmea':'Macho';let p=null;if(a[k+'Id'])p=S.animals.find(x=>x.id===a[k+'Id']);if(!p&&a[k])p=S.animals.find(x=>x.id!==a.id&&nrm(x.tag)===nrm(a[k]));return p&&p.id!==a.id&&p.sex===sx?p:null};
+const parentTxt=(a,k)=>{const p=parentRef(a,k);return p?p.tag+(p.name?' — '+p.name:''):(a[k]||'')};
+const kidsOf=(p,rel,mode)=>{const sx=rel==='mother'?'Fêmea':'Macho',all=[...S.animals,...(S.excluidos||[]).map(e=>e.animal).filter(isObj)];return all.filter(a=>a.id!==p.id&&(a[rel+'Id']?(mode!=='text'&&a[rel+'Id']===p.id):(mode!=='linked'&&p.sex===sx&&a[rel]&&nrm(a[rel])===nrm(p.tag))))};
+const repsOf=(p,mode)=>S.repro.filter(r=>r.touroId?(mode!=='text'&&r.touroId===p.id):(mode!=='linked'&&p.sex==='Macho'&&r.touro&&nrm(r.touro)===nrm(p.tag)));
+const nb=t=>`<span style="white-space:nowrap">${esc(t)}</span>`;
+const parentHtml=(a,k)=>{const p=parentRef(a,k);return p?nb(p.tag)+(p.name?' — '+esc(p.name):''):(a[k]?(/^\S+$/.test(String(a[k]))?nb(a[k]):esc(a[k])):'')};
+function reproTouroInit(it){const ti=$('#f_touro'),lb=ti.closest('label'),frm=$('#frm'),hint=document.createElement('small');hint.className='note2';lb.appendChild(hint);
+ const males=S.animals.filter(a=>a.sex==='Macho'),nm=a=>a.tag+(a.name?' — '+a.name:'');
+ ti.setAttribute('list','dl_touro');ti.insertAdjacentHTML('afterend',`<datalist id="dl_touro">${males.map(a=>`<option value="${esc(a.tag)}">`).join('')}</datalist>`);
+ frm._touroId=it.touroId||'';
+ const upd=()=>{hint.textContent='';const t=ti.value.trim(),lk=frm._touroId&&S.animals.find(a=>a.id===frm._touroId);
+  if(frm._touroId&&lk&&nrm(t)!==nrm(lk.tag))frm._touroId='';else if(frm._touroId&&!lk&&t!==(it.touro||''))frm._touroId='';
+  if(frm._touroId&&lk){hint.textContent='Vinculado ao touro '+nm(lk)+'. Se o brinco dele mudar, este registro acompanha.';return}
+  const c=t&&males.find(a=>nrm(a.tag)===nrm(t));if(!c)return;
+  hint.append('Este texto é o brinco de um touro cadastrado: '+nm(c)+'. ');const bt=document.createElement('button');bt.type='button';bt.textContent='Vincular a este touro';
+  bt.onclick=()=>{if(confirm('Vincular este registro ao touro '+nm(c)+'?\n\nSe o brinco dele mudar, este registro acompanhará a mudança. Para manter só o texto, cancele.')){frm._touroId=c.id;upd()}};hint.append(bt)};
+ ti.addEventListener('input',upd);upd()}
+const exitDet=a=>{const d={Vendido:['comprador',a.buyer],Morto:['causa',a.deathCause],Transferido:['destino',a.destination]}[a.status];return d&&d[1]?' — '+d[0]+': '+esc(d[1]):''};
+function animalFormInit(it,id){
+ const g=k=>$('#f_'+k),today=fmt(new Date()),small=(k,h)=>g(k).closest('label').insertAdjacentHTML('beforeend',h);
+ small('birth','<small class="note2" id="age_hint"></small>');small('cat','<small class="note2" id="cat_hint"></small>');
+ small('wdate','<small class="note2">Informe quando o animal foi pesado (obrigatória ao informar ou mudar o peso). Para corrigir uma pesagem, use a mesma data dela.</small>');
+ const refD=()=>g('status').value!=='Ativo'&&g('exit').value?g('exit').value:today;
+ const syncCat=init=>{const sx=g('sex').value,sel=g('cat'),cur=sel.value,ok=catsFor(sx),sug=catSug(sx,g('birth').value,g('tag').value,refD()),opts=ok.slice();
+  if(init&&cur&&!ok.includes(cur))opts.push(cur);const val=opts.includes(cur)?cur:(ok.includes(sug)?sug:ok[0]);
+  sel.innerHTML=opts.map(o=>`<option${o===val?' selected':''}>${esc(o)}</option>`).join('')};
+ const hints=()=>{const ref=refD(),b=g('birth').value,i=ageInfo(b,ref),sx=g('sex').value,cur=g('cat').value,h=$('#cat_hint');
+  $('#age_hint').textContent=i?'Idade'+(ref!==today?' na saída':'')+': '+ageStr(i)+'.':(b?'Idade não calculada: confira a data de nascimento.':'Informe o nascimento para calcular a idade e sugerir a categoria.');
+  const sug=catSug(sx,b,g('tag').value,ref);h.textContent='';
+  if(!catOk(cur,sx))h.append('“'+cur+'” não combina com o sexo '+sx.toLowerCase()+'. Escolha: '+catsFor(sx).join(', ')+'.');
+  else if(sug&&sug!==cur){h.append('Sugestão pela idade: '+sug+(sx==='Macho'&&sug==='Boi'?' (use Touro se for reprodutor)':'')+'. ');const bt=document.createElement('button');bt.type='button';bt.textContent='Usar '+sug;bt.onclick=()=>{g('cat').value=sug;hints()};h.append(bt)}};
+ const syncSt=()=>{const st=g('status').value;[['buyer','Vendido'],['deathCause','Morto'],['destination','Transferido']].forEach(([k,v])=>{g(k).closest('label').style.display=st===v?'':'none'});
+  g('exit').closest('label').firstChild.nodeValue=ENT.animals.f.find(f=>f.k==='exit').l+(st!=='Ativo'?' *':'')};
+ [['mother','Fêmea','mãe','Mãe fora do rebanho (nome ou brinco)'],['father','Macho','pai','Touro externo ou sêmen (nome ou código)']].forEach(([k,sx,lab,ph])=>{
+  const inp=g(k),lb=inp.closest('label'),orig=inp.value,L=S.animals.filter(a=>a.sex===sx&&a.id!==id).sort((a,b)=>String(a.tag).localeCompare(String(b.tag),'pt',{numeric:true})),lk=it[k+'Id']?L.find(a=>a.id===it[k+'Id']):null,sel=document.createElement('select'),hint=document.createElement('small'),nameOf=a=>a.tag+(a.name?' — '+a.name:'');
+  sel.id='g_'+k;sel.innerHTML='<option value="">— não informado —</option>'+L.map(a=>`<option value="${esc(a.id)}">${esc(a.tag)}${a.name?' — '+esc(String(a.name).length>22?String(a.name).slice(0,21)+'…':a.name):''}${a.status&&a.status!=='Ativo'?' ('+esc(String(a.status).toLowerCase())+')':''}</option>`).join('')+'<option value="__x">Outro (texto livre)</option>';
+  sel.value=lk?lk.id:(orig?'__x':'');lb.insertBefore(sel,inp);inp.placeholder=ph;inp.style.marginTop='6px';hint.className='note2';lb.appendChild(hint);
+  const lh=()=>{hint.textContent='';if(sel.value!=='__x')return;const t=inp.value.trim(),c=t&&S.animals.find(a=>a.id!==id&&a.sex===sx&&nrm(a.tag)===nrm(t));if(!c)return;
+   hint.append('Este texto é o brinco de um animal cadastrado: '+nameOf(c)+'. ');const bt=document.createElement('button');bt.type='button';bt.textContent='Vincular a este animal';
+   bt.onclick=()=>{if(confirm('Vincular a '+lab+' ao animal '+nameOf(c)+'?\n\nO texto “'+t+'” será trocado pela ligação com o animal cadastrado (se o brinco dele mudar, esta ficha acompanha). Para manter só o texto, cancele.')){sel.value=c.id;sync()}};hint.append(bt)};
+  const sync=()=>{const x=sel.value==='__x';inp.style.display=x?'':'none';if(!x)inp.value='';else if(!inp.value&&orig)inp.value=orig;lh()};
+  sel.addEventListener('change',sync);inp.addEventListener('input',lh);sync()});
+ syncCat(true);syncSt();hints();
+ g('sex').addEventListener('change',()=>{syncCat(false);hints()});
+ ['birth','tag','exit','cat'].forEach(k=>g(k).addEventListener('input',hints));g('cat').addEventListener('change',hints);
+ g('status').addEventListener('change',()=>{syncSt();hints()})}
+const putW=(w,d,k)=>{w=(w||[]).slice();const i=w.findIndex(x=>x.date===d);if(i>=0)w[i]={...w[i],kg:k};else w.push({date:d,kg:k});return w};
+function dlg(h){const d=$('#dlg');d.innerHTML=h;d._dirty=false;if(!d.open)d.showModal();d.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>closeDlg());
+ d.oninput=e=>{d._dirty=true;if(e.target.hasAttribute&&e.target.hasAttribute('aria-invalid'))e.target.removeAttribute('aria-invalid')};
+ d.oncancel=e=>{if(d._dirty&&d.querySelector('#frm')&&!confirm('Descartar o que foi digitado?'))e.preventDefault()}}
+function closeDlg(){const d=$('#dlg');if(d._dirty&&d.querySelector('#frm')&&!confirm('Descartar o que foi digitado?'))return;d._dirty=false;d.close()}
+/* err(mensagem, id-do-campo): mostra o erro, marca o campo (aria-invalid) e leva o foco até ele */
+const err=(m,id)=>{const e=$('#err');if(!e)return;const d=$('#dlg'),row=d.querySelector('#frm .row')||d.querySelector('.row'),home=()=>{if(row&&row.parentNode&&e.nextElementSibling!==row)row.parentNode.insertBefore(e,row);e.style.margin=''};
+ e.textContent=m;d.querySelectorAll('[aria-invalid]').forEach(x=>x.removeAttribute('aria-invalid'));
+ let f=null,host=null;if(m&&id){f=$('#'+id);if(f){f.setAttribute('aria-invalid','true');host=f.closest('label')||f.parentNode}}
+ if(host){if(e.parentNode!==host)host.appendChild(e);e.style.margin='6px 0 0'}else home();
+ if(f)f.focus({preventScroll:true});if(m)revealIn(d,host||e)};
+/* revealIn: rola o diálogo até que o campo + a mensagem fiquem dentro da área livre, acima dos botões fixos (e do teclado, quando o navegador informa) */
+function revealIn(d,el){const go=()=>{if(!d.open||!el.isConnected)return;const row=d.querySelector('.row'),dr=d.getBoundingClientRect(),vv=window.visualViewport,
+  t=Math.max(dr.top,vv?vv.offsetTop:0)+8,b=Math.min(row?row.getBoundingClientRect().top:dr.bottom,dr.bottom,vv?vv.offsetTop+vv.height:innerHeight)-8,r=el.getBoundingClientRect();
+  if(r.height>b-t||r.top<t)d.scrollTop+=r.top-t;else if(r.bottom>b)d.scrollTop+=r.bottom-b};go();setTimeout(go,250)}
+function field(f,v){const id='f_'+f.k;let c;
+ if(f.o)c=`<select id="${id}">${(v&&!f.o.includes(v)?f.o.concat(v):f.o).map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+ else if(f.t==='textarea')c=`<textarea id="${id}" rows="3">${esc(v)}</textarea>`;
+ else c=`<input id="${id}" type="${f.t||'text'}" value="${esc(v)}"${f.t==='number'?` step="any" min="${f.pos?'0.01':'0'}" inputmode="decimal"`:''}>`;
+ return `<label class="${f.t==='textarea'?'full':''}">${f.l}${f.r?' *':''}${c}</label>`}
+function form(type,id){const E=ENT[type],it=id?S[type].find(x=>x.id===id):{...DEF[type],date:type==='events'?ui.sel:fmt(new Date())};
+ if(!it)return;
+ dlg(`<form id="frm" novalidate><h2>${id?'Editar':'Novo'} ${E.n}</h2><div class="grid">${E.f.map(f=>field(f,type==='fin'&&f.k==='cat'?fcat(it):(type==='animals'&&f.k==='wdate'?lastWDate(it):it[f.k]))).join('')}</div><p class="err" id="err" role="alert"></p><div class="row"><button type="button" data-x>Cancelar</button><button class="pri">Salvar</button></div></form>`);
+ if(type==='repro'){
+  const syncResult=(reset=false)=>{const typ=$('#f_tipo').value,sel=$('#f_res'),old=sel.value;
+   const opts=['Cobertura (monta natural)','Inseminação artificial','IATF'].includes(typ)?['—']:
+    typ==='Diagnóstico de gestação'?['—','Prenhe','Vazia']:
+    typ==='Parto/nascimento'?['—','Nasceu vivo','Natimorto']:
+    typ==='Desmama'?['—','Desmamado']:['—'];
+   sel.innerHTML=opts.map(v=>`<option>${v}</option>`).join('');
+   if(!reset&&opts.includes(old))sel.value=old;else sel.value=opts[0];
+  };
+  $('#f_tipo').addEventListener('change',()=>syncResult(true));syncResult(false);
+ }
+ if(type==='fin'){
+  const syncCat=()=>{const rec=$('#f_tipo').value==='Receita',sel=$('#f_cat'),old=sel.value,opts=ENT.fin.f.find(f=>f.k==='cat').o.filter(c=>RECCAT.includes(c)===rec);
+   sel.innerHTML=opts.map(c=>`<option${c===old?' selected':''}>${esc(c)}</option>`).join('')};
+  $('#f_tipo').addEventListener('change',syncCat);syncCat();
+ }
+ if(type==='repro'||type==='sanit'){
+  const L=type==='repro'?S.animals.filter(a=>a.sex!=='Macho').map(a=>a.tag):[...S.animals.map(a=>a.tag),...S.pasto.map(p=>p.nome)],inp=$('#f_animal');
+  inp.setAttribute('list','dl_animal');inp.insertAdjacentHTML('afterend',`<datalist id="dl_animal">${[...new Set(L.filter(Boolean))].map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`);
+ }
+ if(type==='repro')reproTouroInit(it);
+ if(type==='animals'){const DL={breed:['Nelore','Angus','Brahman','Gir','Guzerá','Tabapuã','Senepol','Brangus','Hereford','Cruzado','Mestiço','SRD (sem raça definida)'],origin:['Nascido na fazenda','Compra','Doação','Transferência de outra propriedade','Leilão'],coat:['Branca','Cinza','Vermelha','Preta','Amarela','Castanha','Malhada','Baia','Tordilha']};for(const k in DL){const el=$('#f_'+k);el.setAttribute('list','dl_'+k);el.insertAdjacentHTML('afterend',`<datalist id="dl_${k}">${DL[k].map(o=>`<option value="${esc(o)}">`).join('')}</datalist>`)}
+ const li=$('#f_lot');li.setAttribute('list','dl_lot');li.insertAdjacentHTML('afterend',`<datalist id="dl_lot">${S.pasto.map(p=>`<option value="${esc(p.nome)}">`).join('')}</datalist>`)}
+ if(type==='animals')animalFormInit(it,id);
+ $('#frm').onsubmit=e=>{e.preventDefault();const o={},today=fmt(new Date());let wd='',updText=false,txtLeft=0,repl=null;
+  for(const f of E.f){let v=$('#f_'+f.k).value.trim();if(f.r&&!v)return err('Preencha: '+f.l,'f_'+f.k);if(f.t==='number'&&v!==''){v=+v;if(!isFinite(v)||v<0)return err(f.l+' inválido','f_'+f.k);if(f.pos&&!(v>0))return err(f.l+' deve ser maior que zero','f_'+f.k)}o[f.k]=v}
+  if(type==='animals'){
+   if(S.animals.some(a=>a.id!==id&&nrm(a.tag)===nrm(o.tag)))return err('Já existe um animal com este brinco.','f_tag');
+   if(!catOk(o.cat,o.sex))return err('A categoria “'+o.cat+'” não combina com o sexo '+o.sex.toLowerCase()+'. Para '+(o.sex==='Fêmea'?'fêmeas':'machos')+' use: '+catsFor(o.sex).join(', ')+'.','f_cat');
+   const cT=id?S.animals.find(a=>a.id===id):null;
+   if((!cT||nrm(cT.tag)!==nrm(o.tag))&&(S.excluidos||[]).some(x=>x.animal&&nrm(x.animal.tag)===nrm(o.tag)))return err('Existe um animal excluído (arquivado) com este brinco. Restaure-o em “Animais excluídos” ou use outro brinco, para não misturar o histórico de reprodução e sanidade.','f_tag');
+   if(o.birth&&o.birth>today)return err('A data de nascimento não pode ser futura.','f_birth');
+   if(o.exit&&o.birth&&o.exit<o.birth)return err('A data de saída não pode ser anterior ao nascimento.','f_exit');
+   if(o.entry&&o.entry>today)return err('A data de entrada na fazenda não pode ser futura.','f_entry');
+   if(o.entry&&o.birth&&o.entry<o.birth)return err('A data de entrada não pode ser anterior ao nascimento.','f_entry');
+   if(o.entry&&o.exit&&o.exit<o.entry)return err('A data de saída não pode ser anterior à data de entrada na fazenda.','f_exit');
+   if(o.regNum&&S.animals.some(a=>a.id!==id&&nrm(a.regNum)===nrm(o.regNum)))return err('Já existe um animal com este número de registro.','f_regNum');
+   if(o.status==='Ativo'&&o.exit)return err('Animal ativo não tem data de saída: limpe a data ou mude a situação.','f_exit');
+   const SAI={Vendido:['buyer','Comprador'],Morto:['deathCause','Causa da morte'],Transferido:['destination','Destino da transferência']};
+   if(SAI[o.status]){
+    if(!o.exit)return err('Informe a data de saída: animal '+o.status.toLowerCase()+' precisa ter a data em que saiu da fazenda.','f_exit');
+    if(o.exit>today)return err('A data de saída não pode ser futura.','f_exit')}
+   ['buyer','deathCause','destination'].forEach(k=>{if(!SAI[o.status]||SAI[o.status][0]!==k)o[k]=''});
+   const c1=id?S.animals.find(a=>a.id===id):null;
+   wd=o.wdate;delete o.wdate;
+   if(o.weight!==''&&(!c1||!(+o.weight===+c1.weight))){
+    if(!wd)return err('Informe a data da pesagem: o peso precisa ter a data em que o animal foi pesado.','f_wdate');
+    const wm=wChk({birth:o.birth},wd,o.weight);if(wm)return err(wm,/Peso/.test(wm)?'f_weight':'f_wdate');
+    if(c1){const ws=sortW(c1),lw=ws[ws.length-1];
+     if(lw&&wd<lw.date)return err('Este animal já tem uma pesagem mais recente ('+br(lw.date)+'). Para registrar uma pesagem antiga, use o módulo Pesagem.','f_wdate');
+     const ex=(c1.weights||[]).find(x=>x.date===wd);
+     if(ex&&+ex.kg!==+o.weight)repl=ex}}
+   if(c1&&c1.sex!==o.sex){const rel=c1.sex==='Fêmea'?'mother':'father',n=kidsOf(c1,rel).length;if(n)return err('Este animal consta como '+(rel==='mother'?'mãe':'pai')+' de '+n+' animal(is). Ajuste a genealogia deles antes de mudar o sexo.','f_sex');
+    const nr=c1.sex==='Macho'?repsOf(c1).length:0;if(nr)return err('Este animal consta como touro em '+nr+' registro(s) de reprodução. Ajuste esses registros antes de mudar o sexo.','f_sex')}
+   for(const[k,sx,lab]of[['mother','Fêmea','mãe'],['father','Macho','pai']]){
+    const sv=$('#g_'+k).value,orig=c1?(c1[k]||''):'',origId=c1?c1[k+'Id']:undefined;
+    if(sv&&sv!=='__x'){const par=S.animals.find(a=>a.id===sv);if(!par)return err('O animal escolhido como '+lab+' não está mais cadastrado. Escolha novamente.','g_'+k);
+     if(par.id===id)return err('Um animal não pode ser '+(k==='mother'?'a própria mãe':'o próprio pai')+'.','g_'+k);
+     if(par.sex!==sx)return err('O animal '+par.tag+' está cadastrado como '+par.sex.toLowerCase()+'; '+(k==='mother'?'a mãe precisa ser fêmea':'o pai precisa ser macho')+'.','g_'+k);
+     o[k]=par.tag;o[k+'Id']=par.id}
+    else if(sv==='__x'&&o[k]){
+     /* texto livre: guardado exatamente como está; nunca vira vínculo sozinho. Só se valida o que a pessoa digitou de novo */
+     if(o[k]!==orig){if(nrm(o[k])===nrm(o.tag))return err('Um animal não pode ser '+(k==='mother'?'a própria mãe':'o próprio pai')+'.','f_'+k);
+      const m=S.animals.find(a=>a.id!==id&&nrm(a.tag)===nrm(o[k]));if(m&&m.sex!==sx)return err('O brinco “'+o[k]+'” é de um animal '+m.sex.toLowerCase()+'; '+(k==='mother'?'a mãe precisa ser fêmea':'o pai precisa ser macho')+'. Para texto livre, use outro nome ou código.','f_'+k)}
+     o[k+'Id']=(origId&&o[k]===orig&&!S.animals.some(a=>a.id===origId))?origId:undefined}
+    else{o[k]='';o[k+'Id']=undefined}}
+   if(repl&&!confirm('Já existe uma pesagem registrada em '+br(wd)+': '+repl.kg+' kg.\n\nSe continuar, esse peso será SUBSTITUÍDO por '+o.weight+' kg. As demais pesagens não serão alteradas.\n\nPara guardar uma nova pesagem sem substituir, cancele e mude a data da pesagem.'))return err('Nada foi alterado. Mude a data da pesagem para registrar uma nova pesagem, ou confirme a substituição.','f_wdate');
+   if(SAI[o.status]&&!o[SAI[o.status][0]]&&!confirm(SAI[o.status][1]+' não informado. Salvar mesmo assim?'))return err('Informe: '+SAI[o.status][1]+'.','f_'+SAI[o.status][0]);
+   if(c1&&c1.tag!==o.tag){const kt=[...kidsOf(c1,'mother','text'),...kidsOf(c1,'father','text')],rt=repsOf(c1,'text');txtLeft=new Set(kt).size+rt.length;
+    if(txtLeft){const nomes=[...new Set(kt.map(a=>a.tag))].slice(0,6).join(', ');
+     updText=confirm('Outras fichas citam “'+c1.tag+'” apenas como texto, sem vínculo com este animal:\n'+(kt.length?'• '+new Set(kt).size+' animal(is) como mãe/pai ('+nomes+')\n':'')+(rt.length?'• '+rt.length+' registro(s) de reprodução como touro\n':'')+'\nOK = atualizar esse texto para “'+o.tag+'” e vinculá-las a este animal.\nCancelar = deixá-las como estão (só o brinco deste animal muda).');if(updText)txtLeft=0}}
+   const pm=S.pasto.find(p=>nrm(p.nome)===nrm(o.lot)),c0=id?S.animals.find(a=>a.id===id):null;
+   if(c0&&c0.lotId===null&&nrm(c0.lot)===nrm(o.lot)){o.lot=c0.lot;o.lotId=(pm&&confirm('O lote “'+o.lot+'” coincide com um pasto cadastrado depois que o vínculo anterior foi desfeito. Ligar este animal a esse pasto?'))?(o.lot=pm.nome,pm.id):null}
+   else if(pm){o.lot=pm.nome;o.lotId=pm.id}else o.lotId=undefined;
+  }
+  if(type==='repro'){
+   const m=S.animals.find(a=>nrm(a.tag)===nrm(o.animal));
+   if(!m)return err('Cadastre a matriz no Rebanho e informe o brinco exatamente como está cadastrado.','f_animal');
+   if(m.sex==='Macho')return err('A matriz precisa ser fêmea; este animal está cadastrado como macho.','f_animal');
+   o.animal=m.tag;
+   {const rc=id?S.repro.find(x=>x.id===id):null,ft=$('#frm')._touroId||'',tn=ft?S.animals.find(a=>a.id===ft):null;
+    if(tn&&o.touro&&nrm(o.touro)===nrm(tn.tag)){o.touroId=ft;o.touro=tn.tag}
+    else if(ft&&!tn&&rc&&rc.touroId===ft&&o.touro===(rc.touro||''))o.touroId=ft;
+    else o.touroId=undefined;
+    if(o.touroId===undefined&&!(rc&&'touroId' in rc))delete o.touroId}
+   if(m.status!=='Ativo'&&(COV.includes(o.tipo)||o.tipo==='Diagnóstico de gestação')){const c=id?S.repro.find(x=>x.id===id):null;
+    if(!c||nrm(c.animal)!==nrm(o.animal)||c.tipo!==o.tipo)return err('Não é possível registrar '+(o.tipo==='Diagnóstico de gestação'?'diagnóstico de gestação':'cobertura, inseminação ou IATF')+' para “'+m.tag+'”: o animal está '+String(m.status).toLowerCase()+(m.exit?' desde '+br(m.exit):'')+'. Esses registros só valem para animais ativos. Se ele voltou para a fazenda, mude a situação para Ativo no Rebanho.','f_animal')}
+   if(o.tipo==='Diagnóstico de gestação'&&!['Prenhe','Vazia'].includes(o.res))return err('No diagnóstico, selecione Prenhe ou Vazia.','f_res');
+   if(o.tipo==='Parto/nascimento'&&!['Nasceu vivo','Natimorto'].includes(o.res))return err('No parto, selecione Nasceu vivo ou Natimorto.','f_res');
+   if(o.tipo==='Desmama'&&o.res!=='Desmamado')return err('Na desmama, selecione Desmamado.','f_res');
+   if(['Cobertura (monta natural)','Inseminação artificial','IATF'].includes(o.tipo))o.res='—';
+   if(['Diagnóstico de gestação','Parto/nascimento','Desmama'].includes(o.tipo)&&o.date>today)return err('Data no futuro: diagnóstico, parto e desmama só podem ser registrados depois de acontecerem.','f_date');
+   if(S.repro.some(x=>x.id!==id&&nrm(x.animal)===nrm(o.animal)&&x.tipo===o.tipo&&x.date===o.date&&(x.res||'—')===(o.res||'—')))return err('Já existe um registro igual (mesma matriz, evento, data e resultado).','f_date');
+   if(['Diagnóstico de gestação','Parto/nascimento'].includes(o.tipo)&&!S.repro.some(x=>x.id!==id&&nrm(x.animal)===nrm(o.animal)&&COV.includes(x.tipo)&&x.date<=o.date)&&!confirm('Não há cobertura, inseminação ou IATF anterior registrada para esta matriz. Salvar mesmo assim?'))return;
+  }
+  if(type==='sanit'){
+   if(o.retorno&&o.retorno<o.date)return err('O retorno programado não pode ser anterior à data do registro.','f_retorno');
+   if(o.status==='Concluído'){if(!o.conclusao)o.conclusao=today;if(o.conclusao>today)return err('A data de conclusão não pode ser futura.','f_conclusao');if(o.conclusao<o.date)return err('A conclusão não pode ser anterior à data do registro.','f_conclusao')}else o.conclusao='';
+   const k=nrm(o.animal);
+   if(!S.animals.some(a=>nrm(a.tag)===k||nrm(a.lot)===k)&&!S.pasto.some(p=>nrm(p.nome)===k)&&!confirm('“'+o.animal+'” não corresponde a nenhum brinco, lote ou pasto cadastrado. Salvar mesmo assim?'))return;
+  }
+  if(type==='pasto'&&S.pasto.some(p=>p.id!==id&&nrm(p.nome)===nrm(o.nome)))return err('Já existe um pasto com este nome. Nomes repetidos duplicariam a contagem de animais.','f_nome');
+  if(type==='fin'){
+   if((o.tipo==='Receita')!==RECCAT.includes(o.cat))return err('A categoria não combina com o tipo (receita ou despesa).','f_cat');
+   if(o.status==='Efetivado'&&o.date>today)return err('Lançamento efetivado não pode ter data futura. Use a situação Previsto.','f_date');
+  }
+  let mot=null,info='';
+  if(type==='estoque'&&id){const cur=S.estoque.find(x=>x.id===id),oq=+(cur&&cur.qtd)||0,nq=o.qtd===''?0:o.qtd;
+   if(cur&&Math.abs(nq-oq)>1e-9){mot=prompt('A quantidade mudou de '+f2(oq,3)+' para '+f2(nq,3)+'. Informe o motivo do ajuste (fica registrado nos movimentos):');
+    if(mot===null||!mot.trim())return err('Para alterar a quantidade informe o motivo do ajuste, ou use Entrada/Saída.','f_qtd');mot=mot.trim()}}
+  if(type==='animals'&&id){const cc=S.animals.find(a=>a.id===id);if(cc){['breed','regNum','origin','entry','coat','buyer','deathCause','destination'].forEach(k=>{if(o[k]===''&&!(k in cc))delete o[k]});['motherId','fatherId'].forEach(k=>{if(o[k]===undefined&&!(k in cc))delete o[k]})}}
+  const ok=tx(()=>{
+   if(id){const cur=S[type].find(x=>x.id===id);if(!cur)return false;
+    if(type==='animals'){const nw=o.weight,ch=nw!==''&&!(+nw===+cur.weight),oldTag=cur.tag,md=updText?undefined:'linked',kids=oldTag!==o.tag?[...kidsOf(cur,'mother',md).map(a=>[a,'mother']),...kidsOf(cur,'father',md).map(a=>[a,'father'])]:[],reps=oldTag!==o.tag?repsOf(cur,md):[];Object.assign(cur,o);
+     if(ch)cur.weights=putW(cur.weights,wd,nw);if(sortW(cur).length)syncCurrentWeight(cur);
+     if(oldTag!==o.tag){let n=0;['repro','sanit'].forEach(k=>S[k].forEach(x=>{if(nrm(x.animal)===nrm(oldTag)){x.animal=o.tag;n++}}));if(n)info=' Brinco atualizado em '+n+' registro(s) de reprodução/sanidade.';kids.forEach(([a,r])=>{a[r]=o.tag;a[r+'Id']=cur.id});reps.forEach(r=>{r.touro=o.tag;r.touroId=cur.id});if(kids.length)info+=' Genealogia atualizada em '+new Set(kids.map(x=>x[0])).size+' animal(is).';if(reps.length)info+=' Touro atualizado em '+reps.length+' registro(s) de reprodução.';if(txtLeft)info+=' '+txtLeft+' referência(s) só em texto não foram alteradas.'}}
+    else if(type==='pasto'){const oldN=cur.nome,linked=S.animals.filter(a=>(lotOf(a)||{}).id===cur.id),linkedX=(S.excluidos||[]).map(e=>e.animal).filter(a=>isObj(a)&&(lotOf(a)||{}).id===cur.id);Object.assign(cur,o);
+     linked.concat(linkedX).forEach(a=>{a.lot=o.nome;a.lotId=cur.id});
+     if(oldN!==o.nome){S.sanit.forEach(x=>{if(nrm(x.animal)===nrm(oldN)&&!S.animals.some(a=>nrm(a.tag)===nrm(x.animal)))x.animal=o.nome});if(linked.length)info=' Lote atualizado em '+linked.length+' animal(is)'+(linkedX.length?' e em '+linkedX.length+' animal(is) arquivado(s)':'')+'.'}}
+    else if(type==='estoque'){const oq=+cur.qtd||0;Object.assign(cur,o);if(mot!==null){const nq=o.qtd===''?0:o.qtd;cur.qtd=nq;(cur.mov=cur.mov||[]).push({date:today,q:r6(nq-oq),ajuste:1,motivo:mot})}}
+    else Object.assign(cur,o)}
+   else{o.id=uid();if(type==='animals')o.weights=o.weight!==''?[{date:wd,kg:o.weight}]:[];if(type==='estoque'&&+o.qtd>0)o.mov=[{date:today,q:+o.qtd,ini:1}];S[type].push(o)}
+  });
+  if(!ok)return err(stale?STALE_MSG:'Não foi possível salvar; nada foi alterado. Exporte um backup e tente novamente.');
+  $('#dlg').close();render();toast('Salvo.'+info)}}
+function del(type,id){const it=S[type].find(x=>x.id===id);if(!it)return;let msg='Excluir este registro? Não é possível desfazer.',fn=()=>{S[type]=S[type].filter(x=>x.id!==id)},done='Excluído.';
+ if(type==='animals'){const k=nrm(it.tag),n=S.repro.filter(x=>nrm(x.animal)===k).length+S.sanit.filter(x=>nrm(x.animal)===k).length,w=(it.weights||[]).length;
+  msg='Excluir o animal '+it.tag+'? Ele será ARQUIVADO em “Animais excluídos” (botão na tela Rebanho) junto com as '+w+' pesagem(ns) dele, e poderá ser restaurado depois.'+(n?' Os '+n+' registro(s) de reprodução/sanidade com este brinco continuam salvos.':'')+' Enquanto arquivadas, as pesagens não entram nos cálculos de GMD nem nos relatórios.';
+  done='Animal arquivado em “Animais excluídos”.';
+  fn=()=>{const c=S.animals.find(x=>x.id===id);if(!c)return false;(S.excluidos=S.excluidos||[]).push({id:uid(),deletedAt:fmt(new Date()),animal:c});S.animals=S.animals.filter(x=>x.id!==id)}}
+ else if(type==='pasto'){const linked=S.animals.filter(a=>(lotOf(a)||{}).id===id),ax=(S.excluidos||[]).filter(e=>isObj(e.animal)&&(lotOf(e.animal)||{}).id===id).length,k=nrm(it.nome),ref=S.sanit.filter(x=>nrm(x.animal)===k&&!S.animals.some(a=>nrm(a.tag)===k)).length;
+  msg='Excluir o pasto “'+it.nome+'”?'+(linked.length?' '+linked.length+' animal(is) estão ligados a ele; continuam cadastrados, mas ficam sem vínculo com pasto (o texto do campo Lote é mantido e eles não voltam a ser ligados sozinhos a outro pasto de mesmo nome).':'')+(ax?' '+ax+' animal(is) arquivado(s) também citam este pasto.':'')+(ref?' '+ref+' registro(s) sanitário(s) citam este pasto pelo nome e continuam salvos.':'')+' Não é possível desfazer.';
+  fn=()=>{S.animals.forEach(a=>{if((lotOf(a)||{}).id===id)a.lotId=null});(S.excluidos||[]).forEach(e=>{if(isObj(e.animal)&&(lotOf(e.animal)||{}).id===id)e.animal.lotId=null});S.pasto=S.pasto.filter(x=>x.id!==id)}}
+ if(!confirm(msg))return;const ok=tx(fn);render();if(ok)toast(done)}
+
+function movList(id){const x=S.estoque.find(v=>v.id===id);if(!x)return;const M=(x.mov||[]).map((m,i)=>({...m,i})).reverse();
+ dlg(`<h2>Movimentos — ${esc(x.item)}</h2><p>Saldo atual: <b>${f2(+x.qtd||0,3)} ${esc(x.un||'')}</b></p>${M.map(m=>`<div class="ev"><div><b>${br(m.date)}: ${m.q>0?'+':''}${f2(m.q,3)} ${esc(x.un||'')}</b><small>${m.ini?'Saldo inicial':m.ajuste?'Ajuste de quantidade'+(m.motivo?': '+esc(m.motivo):''):m.q>0?'Entrada':'Saída'}</small></div><div class="act"><button data-mdel="${esc(id)}:${m.i}">Excluir</button></div></div>`).join('')||empty('Nenhum movimento registrado. O saldo atual foi informado direto no cadastro do item.')}<div class="row"><button data-x>Fechar</button></div>`)}
+function movDel(id,i){const x=S.estoque.find(v=>v.id===id),m=x&&(x.mov||[])[i];if(!m)return;const nq=r6((+x.qtd||0)-m.q);
+ if(nq<0)return toast('Não é possível excluir: o saldo ficaria negativo.',5000);
+ if(!confirm('Excluir este movimento? O saldo será recalculado de '+f2(+x.qtd||0,3)+' para '+f2(nq,3)+' '+(x.un||'')+'.'))return;
+ const ok=tx(()=>{const c=S.estoque.find(v=>v.id===id);c.qtd=nq;c.mov.splice(i,1)});render();if(ok)toast('Movimento excluído; saldo recalculado.');movList(id)}
+
+function sanitDone(id){const x=S.sanit.find(v=>v.id===id);if(!x)return;
+ dlg(`<form id="frm" novalidate><h2>Concluir procedimento</h2><p>${esc(x.tipo)}${x.produto?' — '+esc(x.produto):''} · ${esc(x.animal)}</p><div class="grid">${field({k:'conclusao',l:'Data de conclusão',t:'date'},fmt(new Date()))}${field({k:'obsConclusao',l:'Observações (opcional)',t:'textarea'},x.obsConclusao||'')}</div><p class="err" id="err" role="alert"></p><div class="row"><button type="button" data-x>Cancelar</button><button class="pri">Concluir</button></div></form>`);
+ $('#frm').onsubmit=e=>{e.preventDefault();const c=$('#f_conclusao').value,ob=$('#f_obsConclusao').value.trim();
+  if(!c)return err('Informe a data de conclusão.','f_conclusao');if(c>fmt(new Date()))return err('A data de conclusão não pode ser futura.','f_conclusao');if(x.date&&c<x.date)return err('A conclusão não pode ser anterior à data do registro ('+br(x.date)+').');
+  const ok=tx(()=>{const k=S.sanit.find(v=>v.id===id);if(!k)return false;k.status='Concluído';k.conclusao=c;k.obsConclusao=ob});
+  if(!ok)return err(stale?STALE_MSG:'Não foi possível salvar; nada foi alterado.');$('#dlg').close();render();toast('Procedimento concluído.')}}
+function sanitReopen(id){const x=S.sanit.find(v=>v.id===id);if(!x)return;
+ const ok=tx(()=>{const k=S.sanit.find(v=>v.id===id);if(!k)return false;k.status='Pendente';k.conclusao=''});render();if(ok)toast('Procedimento reaberto como pendente (a data de conclusão foi removida).')}
+function exclList(){const E=S.excluidos||[];
+ dlg(`<h2>Animais excluídos</h2><p class="note2">Ficam arquivados com o histórico de pesagens e não entram nos relatórios nem nos cálculos. Restaurar devolve o animal ao Rebanho com as pesagens.</p>${[...E].reverse().map(x=>{const a=x.animal||{},w=(a.weights||[]).filter(v=>v&&+v.kg>0),last=[...w].sort((p,q)=>String(p.date).localeCompare(String(q.date))).pop();
+  return `<div class="ev"><div><b>${esc(a.tag)}${a.name?' — '+esc(a.name):''}</b><small>Excluído em ${br(x.deletedAt)} · ${w.length} pesagem(ns)${last?' · última: '+esc(last.kg)+' kg em '+br(last.date):''}</small></div><div class="act"><button data-exr="${esc(x.id)}">Restaurar</button><button data-exd="${esc(x.id)}">Apagar de vez</button></div></div>`}).join('')||empty('Nenhum animal excluído.')}<div class="row"><button data-x>Fechar</button></div>`)}
+function exclRestore(id){const x=(S.excluidos||[]).find(v=>v.id===id);if(!x||!x.animal)return;
+ if(S.animals.some(a=>nrm(a.tag)===nrm(x.animal.tag)))return toast('Já existe um animal com o brinco '+x.animal.tag+'. Renomeie o atual antes de restaurar.',5000);
+ const ok=tx(()=>{const c=S.excluidos.find(v=>v.id===id),a=c.animal;a.weights=Array.isArray(a.weights)?a.weights:[];if(S.animals.some(v=>v.id===a.id))a.id=uid();
+  if(a.lotId){const p=S.pasto.find(p=>p.id===a.lotId);if(p)a.lot=p.nome;else a.lotId=null}
+  S.animals.push(a);S.excluidos=S.excluidos.filter(v=>v.id!==id)});
+ render();if(ok)toast('Animal restaurado com as pesagens.');exclList()}
+function exclDrop(id){const x=(S.excluidos||[]).find(v=>v.id===id);if(!x)return;const a=x.animal||{};
+ const kk=nrm(a.tag),nr=S.repro.filter(v=>nrm(v.animal)===kk).length,nz=S.sanit.filter(v=>nrm(v.animal)===kk).length;
+ if(!confirm('Apagar DEFINITIVAMENTE o animal '+a.tag+(a.name?' ('+a.name+')':'')+'? Serão removidos para sempre: o cadastro e as '+(a.weights||[]).length+' pesagem(ns) arquivadas. NÃO serão apagados: os '+nr+' registro(s) de reprodução e '+nz+' de sanidade com este brinco (continuam nos módulos deles). Não é possível desfazer.'))return;
+ const ok=tx(()=>{S.excluidos=S.excluidos.filter(v=>v.id!==id)});render();if(ok)toast('Apagado definitivamente.');exclList()}
+
+let view='dash',ui={q:'',st:'',sort:'tag',dir:1,cal:new Date(),mode:'month',sel:fmt(new Date())};
+const evLine=e=>`<p>${br(e.date)} ${esc(e.time)} — ${esc(e.title)} <small>${esc(e.cat)}</small></p>`;
+const demoBanner=()=>[...S.animals,...S.events,...S.notes].some(x=>x.demo)?`<div class="alert">Há dados de demonstração neste sistema. <button data-act="rmdemo">Remover demonstração</button></div>`:'';
+
+function dash(){const A=S.animals.filter(a=>a.status==='Ativo'),n=c=>A.filter(a=>a.cat===c).length,t=fmt(new Date());
+ const pend=S.events.filter(e=>e.status!=='Concluído'),lots=new Set(A.map(a=>nrm(lotName(a))).filter(k=>k&&k!=='(sem lote)'));
+ const vac=pend.filter(e=>['Vacinação','Vermifugação'].includes(e.cat)&&e.date>=t).sort(byDate).slice(0,5),late=pend.filter(e=>e.date&&e.date<t);
+ const cats={};A.forEach(a=>{const k=a.cat||'Sem categoria';cats[k]=(cats[k]||0)+1});const mx=Math.max(1,...Object.values(cats));
+ const card=(l,v,sub,est)=>`<div class="card${est?' est':''}"><b>${v}</b>${l}${est?'<span class="tg">estimativa</span>':''}${sub?`<small>${sub}</small>`:''}</div>`;
+ const W=A.filter(a=>+a.weight>0),O=openSvc(),sv=S.sanit.filter(x=>!sanAnim(x)).map(sanSit),sp=sv.filter(v=>v.k==='pend'||v.k==='late').length,sl=sv.filter(v=>v.k==='late').length,ea=S.estoque.filter(alerta).length,inat=S.animals.length-A.length;
+ return `${demoBanner()}<h2>Painel</h2><div class="cards">${card('Animais ativos',A.length,inat?inat+' vendido(s), morto(s) ou transferido(s) fora da contagem':'')}${card('Matrizes',n('Matriz'))}${card('Touros',n('Touro'))}${card('Bezerros',n('Bezerro')+n('Bezerra'))}${card('Lotes com animais',lots.size)}${card('Tarefas pendentes',pend.length)}${W.length?card('Peso médio dos ativos (kg)',f2(W.reduce((s,a)=>s+ +a.weight,0)/W.length,0),'último peso registrado de '+W.length+' de '+A.length+' animais'):''}${S.repro.length?card('Matrizes com prenhez confirmada',O.filter(o=>o.conf).length,'diagnóstico positivo, sem parto registrado'):''}${S.repro.length?card('Partos nos próximos 30 dias',dueList().length,'data da cobertura + '+gest()+' dias',true):''}${S.sanit.length?card('Sanidade pendente',sp,sl?sl+' vencido(s)':'nenhum vencido'):''}${S.estoque.length?card('Estoque em alerta',ea,'de '+S.estoque.length+' iten(s) cadastrado(s)'):''}</div>
+ ${late.length?`<div class="alert">${late.length} tarefa(s) atrasada(s): ${late.slice(0,3).map(e=>esc(e.title)).join(', ')}</div>`:''}
+ ${alerts()}<div class="two"><section><h3>Rebanho por categoria</h3>${Object.entries(cats).map(([k,v])=>`<div class="bar"><span>${esc(k)}</span><i style="width:${v/mx*100}%"></i><em>${v}</em></div>`).join('')||empty('Cadastre animais para ver o gráfico.')}</section>
+ <section><h3>Próximas vacinações e vermifugações</h3>${vac.map(evLine).join('')||empty('Nenhuma agendada no calendário.')}</section>
+ <section><h3>Anotações recentes</h3>${[...S.notes].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5).map(x=>`<p>${br(x.date)} — ${esc(x.title)}</p>`).join('')||empty('Sem anotações.')}</section>
+ <section><h3>Financeiro</h3>${finDash()}</section></div><p class="note2">Os números acima vêm dos registros cadastrados. Itens marcados como <b>estimativa</b> são calculados a partir de datas e premissas, não são fatos confirmados.</p>`}
+
+function animals(){const q=ui.q.toLowerCase();
+ const L=S.animals.filter(a=>(!ui.st||a.status===ui.st)&&(!q||[a.tag,a.name,a.lot,a.cat,a.breed,a.regNum].join(' ').toLowerCase().includes(q)))
+  .sort((a,b)=>String(a[ui.sort]??'').localeCompare(String(b[ui.sort]??''),'pt',{numeric:true})*ui.dir);
+ const th=(k,l)=>`<th><button data-sort="${k}">${l}${ui.sort===k?(ui.dir>0?' ▲':' ▼'):''}</button></th>`;
+ return `${demoBanner()}<h2>Rebanho</h2>${(n=>n?`<div class="alert" style="padding:6px 10px;margin:8px 0;font-size:.85rem;line-height:1.3">${n} animal(is) sem data de saída (vendido, morto ou transferido): edite para informar.</div>`:'')(S.animals.filter(a=>a.status!=='Ativo'&&!a.exit).length)}<div class="bar2"><input id="q" aria-label="Buscar" placeholder="Buscar brinco, nome, raça, lote…" value="${esc(ui.q)}"><select id="st" aria-label="Filtrar"><option value="">Todas as situações</option>${ST.map(s=>`<option${ui.st===s?' selected':''}>${s}</option>`).join('')}</select><select id="sortm" class="sortm" aria-label="Ordenar por">${[['tag','Brinco'],['name','Nome'],['cat','Categoria'],['weight','Peso'],['lot','Lote'],['status','Situação']].map(o=>`<option value="${o[0]}"${ui.sort===o[0]?' selected':''}>Ordenar: ${o[1]}${ui.sort===o[0]?(ui.dir>0?' ▲':' ▼'):''}</option>`).join('')}</select><button class="pri" data-add="animals">Novo animal</button>${(S.excluidos||[]).length?`<button data-exl="1">Animais excluídos (${S.excluidos.length})</button>`:''}</div>
+ <div class="tw"><table><thead><tr>${th('tag','Brinco')}${th('name','Nome')}${th('cat','Categoria')}${th('weight','Peso (kg)')}${th('lot','Lote')}${th('status','Situação')}<th></th></tr></thead><tbody>${L.map(a=>`<tr><td>${esc(a.tag)}</td><td>${esc(a.name)}</td><td>${esc(a.cat)}${ageOf(a)?`<small>${esc(ageOf(a))}</small>`:''}</td><td>${esc(a.weight??'')}</td><td>${esc(a.lot)}</td><td>${esc(a.status)}</td><td class="act"><button data-view="${esc(a.id)}">Ver</button><button data-edit="animals:${esc(a.id)}">Editar</button><button data-del="animals:${esc(a.id)}">Excluir</button></td></tr>`).join('')}</tbody></table>${L.length?'':empty('Nenhum animal encontrado. Use “Novo animal” para cadastrar.')}</div>`}
+function hist(a){const t=nrm(a.tag),m=k=>S[k].filter(x=>nrm(x.animal)===t).sort((p,o)=>o.date.localeCompare(p.date));
+ const R=m('repro'),Z=m('sanit');return (R.length?`<h3>Reprodução</h3>${R.map(x=>`<p>${br(x.date)}: ${esc(x.tipo)}${x.res&&x.res!=='—'?' — '+esc(x.res):''}${prev(x)?' <small>parto previsto '+prev(x)+'</small>':''}</p>`).join('')}`:'')+(Z.length?`<h3>Sanidade</h3>${Z.map(x=>`<p>${br(x.date)}: ${esc(x.tipo)}${x.produto?' — '+esc(x.produto):''}${sanSit(x).k!=='reg'?' <small>'+esc(sanSit(x).l)+'</small>':''}</p>`).join('')}`:'')}
+function viewAnimal(id){const a=S.animals.find(x=>x.id===id),w=sortW(a);let g='';
+ if(w.length>1){const f=w[0],l=w[w.length-1],d=(ts(l.date)-ts(f.date))/864e5;g=d>0?`${f2((l.kg-f.kg)/d,3)} kg/dia (${br(f.date)} a ${br(l.date)}, peso vivo)`:'intervalo inválido (pesagens no mesmo dia)'}
+ dlg(`<h2>${esc(a.tag)} ${esc(a.name)}</h2><p>${esc(a.cat)}, ${esc(a.sex)}, nascimento ${br(a.birth)}${ageOf(a)?' (idade: '+esc(ageOf(a))+')':''}, ${esc(a.status)}${a.exit?' em '+br(a.exit):(a.status!=='Ativo'?' (sem data de saída)':'')}${exitDet(a)}</p><p>Lote: ${esc(a.lot)||'—'}. Mãe: ${parentHtml(a,'mother')||'—'}. Pai: ${parentHtml(a,'father')||'—'}.</p><p>Raça: ${esc(a.breed)||'—'}. Nº de registro: ${esc(a.regNum)||'—'}. Cor da pelagem: ${esc(a.coat)||'—'}.</p><p>Origem: ${esc(a.origin)||'—'}. Entrada na fazenda: ${a.entry?br(a.entry):'—'}.</p><p>${esc(a.notes)}</p><h3>Histórico de pesagens</h3>${w.slice().reverse().map(x=>`<p>${br(x.date)}: ${esc(x.kg)} kg</p>`).join('')||empty('Sem pesagens.')}<p><b>Peso atual registrado:</b> ${a.weight!==''&&a.weight!=null?esc(a.weight)+' kg':'não informado'}</p><p><b>Ganho médio diário:</b> ${g||'precisa de 2 pesagens em datas diferentes'}</p>${hist(a)}<div class="row"><button data-x>Fechar</button></div>`)}
+
+function agenda(){const c=ui.cal,m=ui.mode,days=[];
+ if(m==='month'){const f=new Date(c.getFullYear(),c.getMonth(),1).getDay();for(let i=-f;i<42-f;i++)days.push(new Date(c.getFullYear(),c.getMonth(),1+i))}
+ else if(m==='week')for(let i=0;i<7;i++)days.push(new Date(c.getFullYear(),c.getMonth(),c.getDate()-c.getDay()+i));
+ const ev=d=>S.events.filter(e=>e.date===d),td=fmt(new Date());
+ const cell=d=>{const s=fmt(d),E=ev(s);return `<button class="day${s===ui.sel?' sel':''}${s===td?' today':''}${m==='month'&&d.getMonth()!==c.getMonth()?' out':''}" data-sel="${s}">${d.getDate()}${E.slice(0,3).map(e=>`<i class="${e.status==='Concluído'?'ok':esc(e.prio)}">${esc(e.title)}</i>`).join('')}${E.length>3?'<i>+'+(E.length-3)+'</i>':''}</button>`};
+ const L=ev(ui.sel).sort(byDate),o=(v,l)=>`<option value="${v}"${m===v?' selected':''}>${l}</option>`;
+ return `<h2>Agenda</h2><div class="bar2 cal-nav"><button data-nav="-1" aria-label="Anterior">‹</button><strong class="cap">${c.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</strong><button data-nav="1" aria-label="Próximo">›</button><select id="mode" aria-label="Modo de exibição">${o('month','Mês')}${o('week','Semana')}${o('day','Dia')}</select><button class="pri" data-add="events">Novo compromisso</button></div>
+ ${m==='day'?'':`<div class="cal">${['D','S','T','Q','Q','S','S'].map(x=>`<b>${x}</b>`).join('')}${days.map(cell).join('')}</div>`}
+ <h3>${br(ui.sel)}</h3>${L.map(e=>`<div class="ev ${e.status==='Concluído'?'done':''}"><div><b>${esc(e.time)} ${esc(e.title)}</b><small>${esc(e.cat)}, prioridade ${esc(e.prio)}${e.lot?', '+esc(e.lot):''}</small><small>${esc(e.notes)}</small></div><div class="act"><button data-done="${esc(e.id)}">${e.status==='Concluído'?'Reabrir':'Concluir'}</button><button data-edit="events:${esc(e.id)}">Editar</button><button data-del="events:${esc(e.id)}">Excluir</button></div></div>`).join('')||empty('Nada neste dia. Use “Novo compromisso”.')}`}
+
+function notes(){const q=ui.q.toLowerCase(),L=S.notes.filter(n=>!q||[n.title,n.text,n.tags,n.rel,n.cat].join(' ').toLowerCase().includes(q)).sort((a,b)=>b.date.localeCompare(a.date));
+ return `<h2>Anotações</h2><div class="bar2"><input id="q" aria-label="Buscar" placeholder="Buscar nas anotações…" value="${esc(ui.q)}"><button class="pri" data-add="notes">Nova anotação</button></div>${L.map(n=>`<article class="note"><h3>${esc(n.title)}</h3><small>${br(n.date)}, ${esc(n.cat)}${n.rel?', '+esc(n.rel):''}${n.tags?', #'+esc(n.tags).split(/\s*,\s*/).join(' #'):''}</small><p>${esc(n.text)}</p><div class="act"><button data-edit="notes:${esc(n.id)}">Editar</button><button data-del="notes:${esc(n.id)}">Excluir</button></div></article>`).join('')||empty('Nenhuma anotação.')}`}
+
+const impBanner=()=>impNote?`<div class="alert" role="alert"><b>Avisos da última importação ou restauração</b><ul>${impNote.map(t=>`<li>${esc(t)}</li>`).join('')}</ul><button data-act="okimp">Entendi</button></div>`:'';
+function data(){return `${demoBanner()}${impBanner()}${restoreBox()}<h2>Dados e backup</h2><div class="cards2"><button class="pri" data-act="export">Exportar backup (JSON)</button><label class="btn" tabindex="0" role="button">Importar backup<input type="file" id="imp" accept=".json" hidden></label><button data-act="demo">Carregar dados de demonstração</button><button data-act="rmdemo">Remover demonstração</button><button data-act="clear">Apagar tudo</button></div><p>Os dados ficam salvos só neste navegador e neste aparelho (localStorage). Não há sincronização entre aparelhos nem login: use o backup para levar os dados a outro lugar. Limpar os dados do navegador apaga tudo. Mover o arquivo de pasta, abrir em outro navegador ou usar aba anônima também pode mostrar o sistema vazio: o navegador guarda os dados separadamente para cada origem de abertura (endereço ou local do arquivo), então os dados continuam no lugar de origem e não são perdidos. Para levar os dados do celular ao notebook: exporte o backup aqui e importe no outro aparelho.</p>`}
+function act(a){
+ if(a==='export'){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));l.download='gestao-rural-backup-'+fmt(new Date())+'.json';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(l.href),1000)}
+ else if(a==='okimp'){impNote=null;render()}
+ else if(a==='restimp'&&!isStale()){const c=impCopy();if(!c)return toast('Não há cópia de recuperação.',4000);
+  let d;try{d=JSON.parse(c.raw);if(!valid(d))throw 0;fill(d)}catch(e){return toast('A cópia de recuperação está inválida. Nada foi alterado.',6000)}
+  const NOTE=fillMsg(lastFill);
+  if(!confirm('Restaurar os dados anteriores à última importação ('+impDesc(c)+')?\n\nOs dados atuais ('+S.animals.length+' animal(is), '+S.events.length+' compromisso(s), '+S.notes.length+' anotação(ões)) serão substituídos. Uma cópia dos dados atuais será guardada no navegador antes da troca, e a cópia de recuperação continua guardada.'+(NOTE.length?'\n\nAvisos da cópia:\n- '+NOTE.join('\n- '):'')))return;
+  let k=true;try{localStorage.setItem(KEY+'.antes-de-restaurar',JSON.stringify(S))}catch(e){k=false}
+  if(!k&&!confirm('Não foi possível guardar uma cópia dos dados atuais (armazenamento cheio?). Exporte um backup deles antes. Restaurar mesmo assim?'))return;
+  const ok=tx(()=>{S=d});
+  if(ok){impNote=NOTE.length?NOTE:null;render();toast('Dados anteriores à importação restaurados.',5000)}else{render();toast('Os dados NÃO foram restaurados: o navegador recusou a gravação.',6000)}}
+ else if(a==='gest'||a==='gest0'){const v=a==='gest0'?285:Number($('#gest').value);if(!Number.isInteger(v)||v<240||v>320)return toast('Informe um número inteiro de dias entre 240 e 320.',4000);
+  const ok=tx(()=>{S.config=Object.assign({},isObj(S.config)?S.config:{},{gestDias:v})});render();if(ok)toast('Período de gestação: '+v+' dias.')}
+ else if(a==='demo'){if(S.animals.some(x=>x.demo))return toast('Demonstração já carregada.');
+  if(KEYS.some(k=>S[k].some(x=>!x.demo))&&!confirm('Já existem dados cadastrados. A demonstração será ADICIONADA junto, marcada como demonstração, e pode ser removida depois em “Remover demonstração”. Seus dados não serão alterados. Continuar?'))return;const t=new Date(),p=n=>fmt(new Date(t.getFullYear(),t.getMonth(),t.getDate()+n));
+  const A=(tag,cat,sex,kg,w)=>({id:uid(),demo:1,tag,cat,sex,status:'Ativo',lot:'Pasto 1 (demo)',weight:kg,weights:w});
+  tx(()=>{S.animals.push(A('DEMO-001','Matriz','Fêmea',420,[{date:p(-60),kg:400},{date:p(0),kg:420}]),A('DEMO-002','Touro','Macho',780),A('DEMO-003','Bezerro','Macho',140));
+  S.events.push({id:uid(),demo:1,title:'Vacina (demonstração)',date:p(7),cat:'Vacinação',prio:'Alta',status:'Pendente'});
+  S.notes.push({id:uid(),demo:1,title:'Anotação de demonstração',date:p(0),cat:'Diário de campo',text:'Exemplo removível.'})});render()}
+ else if(a==='rmdemo'){tx(()=>{for(const k of KEYS)S[k]=S[k].filter(x=>!x.demo);S.excluidos=S.excluidos.filter(x=>!(x.animal&&x.animal.demo))});render()}
+ else if(a==='reloadstore')reloadStore();
+ else if(a==='csv')csv();else if(a==='print')window.print();
+ else if(a==='bak'&&recRaw){const l=document.createElement('a');l.href=URL.createObjectURL(new Blob([recRaw],{type:'application/json'}));l.download='gestao-rural-copia-dados-ilegiveis.json';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(l.href),1000)}
+ else if(a==='okrec'){recovered=false;render()}
+ else if(a==='ok'){try{localStorage.setItem('nelore.aviso','1')}catch(e){}render()}
+ else if(a==='clear'&&!isStale()&&confirm('Apagar TODOS os dados deste navegador (inclusive os animais excluídos arquivados)? Antes disso o sistema guarda uma cópia de segurança no próprio navegador, mas o mais seguro é exportar um backup agora. Continuar?')){
+  let c=true;try{localStorage.setItem(KEY+'.antes-de-apagar',JSON.stringify(S))}catch(e){c=false}
+  if(!c&&!confirm('Não foi possível guardar a cópia de segurança (armazenamento cheio?). Apagar mesmo assim?'))return;
+  const ok=tx(()=>{S=blank()});
+  if(!ok){try{localStorage.removeItem(KEY+'.antes-de-apagar')}catch(e){}}
+  render();if(ok)toast(c?'Dados apagados. Cópia dos dados anteriores guardada no navegador (nelore.v1.antes-de-apagar).':'Dados apagados. Não foi possível guardar cópia de segurança.',5000);else toast('Os dados NÃO foram apagados: o navegador recusou a gravação.',6000)}}
+let impNote=null;
+/* E6: cópia de recuperação feita antes de cada importação (chave antiga mantida) + info (data e contagens) */
+const IMPK=KEY+'.antes-de-importar',IMPI=IMPK+'.info';
+function impCopy(){let raw=null;try{raw=localStorage.getItem(IMPK)}catch(e){}if(!raw)return null;
+ let inf=null;try{inf=JSON.parse(localStorage.getItem(IMPI))}catch(e){}
+ if(!inf||typeof inf!=='object'){inf={};try{const d=JSON.parse(raw);if(valid(d))inf={animals:d.animals.length,events:d.events.length,notes:d.notes.length}}catch(e){}}
+ return{raw,at:inf.at||null,animals:inf.animals,events:inf.events,notes:inf.notes}}
+function impPut(c){try{localStorage.setItem(IMPK,c.raw);if(c.at)localStorage.setItem(IMPI,JSON.stringify({at:c.at,animals:c.animals,events:c.events,notes:c.notes}));else localStorage.removeItem(IMPI)}catch(e){}}
+const impDate=t=>{try{return new Date(t).toLocaleString('pt-BR')}catch(e){return String(t)}};
+const impDesc=c=>(c.at?'de '+impDate(c.at):'de data desconhecida')+(c.animals!=null?': '+c.animals+' animal(is), '+c.events+' compromisso(s), '+c.notes+' anotação(ões)':'');
+const restoreBox=()=>{const c=impCopy();return c?`<div class="alert"><b>Cópia de recuperação da última importação</b><p>Dados anteriores à importação, ${esc(impDesc(c))}.</p><button data-act="restimp">Restaurar dados anteriores à importação</button></div>`:'<p>Ainda não há cópia de recuperação de importação.</p>'};
+function imp(f){if(!f||isStale())return;const r=new FileReader();r.onload=()=>{let d,R;
+ try{d=JSON.parse(String(r.result).replace(/^\ufeff/,''));if(!valid(d))throw 0;fill(d);R=lastFill;const t=d.animals.map(a=>nrm(a.tag));if(new Set(t).size!==t.length)throw 1}
+ catch(e){toast(e===1?'Backup recusado: há brincos duplicados. Nada foi alterado.':'Arquivo inválido: não é um backup do Gestão Rural. Nada foi alterado.',6000);return}
+ const NOTE=fillMsg(R),prev=impCopy();
+ if(!confirm('Substituir TODOS os dados atuais por este backup ('+d.animals.length+' animal(is), '+d.events.length+' compromisso(s), '+d.notes.length+' anotação(ões))? Uma cópia dos dados atuais será guardada no navegador antes da troca.'+(prev?'\n\nATENÇÃO: já existe uma cópia de recuperação ('+impDesc(prev)+'). Ela será SUBSTITUÍDA pela cópia dos dados atuais. Se ainda precisar dela, cancele, use “Restaurar dados anteriores à importação” e exporte um backup antes de importar.':'')+(NOTE.length?'\n\nAvisos deste backup:\n- '+NOTE.join('\n- '):'')))return;
+ let c=true;try{localStorage.setItem(IMPK,JSON.stringify(S));try{localStorage.setItem(IMPI,JSON.stringify({at:new Date().toISOString(),animals:S.animals.length,events:S.events.length,notes:S.notes.length}))}catch(e){try{localStorage.removeItem(IMPI)}catch(e2){}}}catch(e){c=false}
+ if(!c&&!confirm('Não foi possível guardar a cópia de segurança dos dados atuais (armazenamento cheio?). Exporte um backup deles antes. Importar mesmo assim?'))return;
+ const old=S;S=d;if(save()){impNote=NOTE.length?NOTE:null;render();toast('Backup importado. Para desfazer: Dados e backup > Restaurar dados anteriores à importação.'+(NOTE.length?' Veja os avisos na tela.':''),NOTE.length?7000:5000)}else{S=old;if(c&&prev)impPut(prev);render()}};
+ r.onerror=()=>toast('Não foi possível ler o arquivo.');r.readAsText(f)}
+
+const sv=p=>`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICON={dash:sv('<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>'),agenda:sv('<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>'),notes:sv('<path d="M6 3h9l4 4v14H6zM9 12h7M9 16h7"/>'),animals:sv('<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.2"/>'),data:sv('<ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>')};
+let okStore=true;try{localStorage.setItem('_t','1');localStorage.removeItem('_t')}catch(e){okStore=false}
+const banner=()=>!okStore?`<div class="alert" role="alert"><b>Este navegador não está permitindo salvar dados.</b> Nada será guardado ao fechar. Tente abrir o arquivo em outro navegador (ou publique o sistema) e use Dados para exportar backups.</div>`:(localStorage.getItem('nelore.aviso')?'':`<div class="alert" role="alert" style="padding:6px 10px;margin:8px 0;font-size:.85rem;line-height:1.3">Seus dados ficam só neste navegador e aparelho; limpar o navegador ou mover o arquivo pode apagá-los. Faça backup em Dados. <button data-act="ok" class="ok-btn">Entendi</button></div>`);
+const num=v=>parseFloat(String(v).replace(',','.')),f2=(x,d=2)=>isFinite(x)?x.toLocaleString('pt-BR',{maximumFractionDigits:d}):'dados insuficientes';
+const money=v=>(+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const addD=(s,k)=>{const d=new Date(s+'T12:00');d.setDate(d.getDate()+k);return fmt(d)};
+const okD=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(Date.parse(d+'T12:00:00Z'));
+/* período de gestação: configurável em Reprodução (padrão 285 dias); valor inválido volta ao padrão */
+function gest(){const v=S&&S.config?Number(S.config.gestDias):NaN;return Number.isInteger(v)&&v>=240&&v<=320?v:285}
+const isPrev=x=>['Cobertura (monta natural)','Inseminação artificial','IATF'].includes(x.tipo)&&x.res!=='Vazia'&&x.date;
+const prev=x=>isPrev(x)&&okD(x.date)&&openSvc().some(o=>o.x.id===x.id)?br(addD(x.date,gest()))+' (estimativa)':'';
+/* animal → pasto: pelo id interno (lotId) quando existe; dados antigos, sem lotId, continuam ligados pelo nome */
+const lotOf=a=>a.lotId===null?null:a.lotId?(S.pasto.find(p=>p.id===a.lotId)||null):(a.lot?(S.pasto.find(p=>nrm(p.nome)===nrm(a.lot))||null):null);
+const lot=p=>S.animals.filter(a=>a.status==='Ativo'&&(lotOf(a)||{}).id===p.id).length;
+const sanAnim=x=>{const k=nrm(x.animal),a=S.animals.find(v=>nrm(v.tag)===k);if(a)return a.status==='Ativo'?'':'inativo';return (S.excluidos||[]).some(e=>e.animal&&nrm(e.animal.tag)===k)?'arquivado':''};
+/* situação de um registro sanitário: Concluído / Vencido / Pendente / Registrado (sem pendência) */
+const sanSit=x=>{const t=fmt(new Date());if(x.status==='Concluído')return{k:'done',l:'Concluído'+(okD(x.conclusao)?' em '+br(x.conclusao):'')};
+ const due=okD(x.retorno)?x.retorno:(okD(x.date)?x.date:'');
+ if(x.status==='Pendente'||x.retorno){if(due&&due<t)return{k:'late',l:'Vencido desde '+br(due),due};return{k:'pend',l:'Pendente'+(due?' até '+br(due):''),due}}
+ return{k:'reg',l:'Registrado'}};
+/* Serviços (cobertura/IA/IATF) ainda "abertos": o mais recente de cada matriz, sem parto registrado e sem diagnóstico negativo posterior.
+   conf = há diagnóstico positivo mais recente; sem diagnóstico a data é só estimativa. */
+function openSvc(){if(OSC)return OSC;const R=S.repro.filter(x=>x&&x.animal&&okD(x.date)),last={},t=fmt(new Date()),actv=new Set(S.animals.filter(a=>a.status==='Ativo').map(a=>nrm(a.tag)));
+ R.filter(x=>COV.includes(x.tipo)&&actv.has(nrm(x.animal))).forEach(x=>{const k=nrm(x.animal);if(!last[k]||x.date>=last[k].date)last[k]=x});
+ return OSC=Object.entries(last).map(([k,x])=>{const af=R.filter(y=>nrm(y.animal)===k&&y.date>=x.date),
+  dg=af.filter(y=>y.tipo==='Diagnóstico de gestação'&&(y.res==='Prenhe'||y.res==='Vazia')).sort((a,b)=>b.date.localeCompare(a.date))[0],
+  tie=!!dg&&af.some(y=>y.tipo==='Diagnóstico de gestação'&&(y.res==='Prenhe'||y.res==='Vazia')&&y.date===dg.date&&y.res!==dg.res),
+  birth=af.some(y=>y.tipo==='Parto/nascimento'),d=addD(x.date,gest());
+  return{k,x,d,days:Math.round((ts(d)-ts(t))/864e5),closed:birth||(!!dg&&dg.res==='Vazia'&&!tie),conf:!!dg&&dg.res==='Prenhe'&&!tie}}).filter(o=>!o.closed)}
+const dueList=()=>openSvc().filter(o=>o.days>=0&&o.days<=30).sort((a,b)=>a.d.localeCompare(b.d));
+function partoAlert(){return dueList().length}
+const alerta=x=>{const a=[],q=+x.qtd||0,t=fmt(new Date());if(x.min!==''&&x.min!=null&&q<=x.min)a.push('Estoque baixo');if(x.val&&x.val<=addD(t,30))a.push(x.val<t?'Vencido':'Vence em até 30 dias');return a.join(', ')};
+Object.assign(ICON,{ana:sv('<path d="M3 21h18M5 17l4-6 4 3 6-9"/>'),pes:sv('<path d="M5 21h14l-2-12H7zM9 9a3 3 0 0 1 6 0M12 9l2-2"/>'),repro:sv('<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.5A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z"/>'),sanit:sv('<path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/>'),pasto:sv('<path d="M3 20h18M6 20c0-5 1-8 3-10M12 20c0-6 0-9 2-12M18 20c0-4-1-7-3-9"/>'),estoque:sv('<path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/>'),fin:sv('<circle cx="12" cy="12" r="9"/><path d="M14.5 9.5c-.5-1-1.5-1.5-2.5-1.5-1.5 0-2.5.8-2.5 2s1 1.7 2.5 2 2.5.8 2.5 2-1 2-2.5 2c-1 0-2-.5-2.5-1.5M12 6v2M12 16v2"/>'),calc:sv('<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M12 12h2M8 16h2M12 16h2"/>'),rel:sv('<path d="M5 21V10M12 21V4M19 21v-8"/>')});
+Object.assign(ENT,{
+repro:{n:'registro de reprodução',f:[{k:'animal',l:'Matriz (brinco)',r:1},{k:'tipo',l:'Evento',o:['Cobertura (monta natural)','Inseminação artificial','IATF','Diagnóstico de gestação','Parto/nascimento','Desmama']},{k:'date',l:'Data',t:'date',r:1},{k:'touro',l:'Touro ou sêmen'},{k:'estacao',l:'Estação de monta'},{k:'res',l:'Resultado',o:['—','Prenhe','Vazia','Nasceu vivo','Natimorto','Desmamado']},{k:'obs',l:'Observações',t:'textarea'}]},
+sanit:{n:'registro sanitário',f:[{k:'animal',l:'Animal ou lote',r:1},{k:'tipo',l:'Tipo',o:['Vacina','Vermifugação','Medicamento','Tratamento','Doença observada','Atendimento veterinário','Retorno programado']},{k:'date',l:'Data',t:'date',r:1},{k:'produto',l:'Produto'},{k:'dose',l:'Dose (conforme orientação veterinária)'},{k:'resp',l:'Responsável'},{k:'retorno',l:'Retorno programado',t:'date'},{k:'status',l:'Situação',o:['Registrado','Pendente','Concluído']},{k:'conclusao',l:'Data de conclusão (se concluído)',t:'date'},{k:'obsConclusao',l:'Observações da conclusão',t:'textarea'},{k:'obs',l:'Observações',t:'textarea'}]},
+pasto:{n:'pasto',f:[{k:'fazenda',l:'Fazenda / propriedade',r:1},{k:'nome',l:'Pasto / piquete',r:1},{k:'area',l:'Área (ha)',t:'number',pos:1},{k:'capim',l:'Tipo de capim'},{k:'cap',l:'Capacidade estimada (cabeças)',t:'number'},{k:'agua',l:'Água',o:['Sim','Não','Parcial']},{k:'hist',l:'Histórico de ocupação e observações',t:'textarea'}]},
+estoque:{n:'item de estoque',f:[{k:'item',l:'Item',r:1},{k:'cat',l:'Categoria',o:['Sal mineral','Ração','Suplemento','Medicamento','Material']},{k:'qtd',l:'Quantidade atual',t:'number'},{k:'un',l:'Unidade (kg, saco, dose…)'},{k:'min',l:'Estoque mínimo',t:'number'},{k:'custo',l:'Custo unitário (R$)',t:'number'},{k:'forn',l:'Fornecedor'},{k:'lote',l:'Lote'},{k:'val',l:'Validade',t:'date'}]},
+fin:{n:'lançamento',f:[{k:'tipo',l:'Tipo',o:['Receita','Despesa']},{k:'date',l:'Data',t:'date',r:1},{k:'cat',l:'Categoria',o:['Venda de animais','Venda de produção','Outras receitas','Compra de animais','Alimentação e suplementos','Sal mineral','Medicamentos e vacinas','Reprodução','Mão de obra','Combustível','Frete e transporte','Pastagem e cercas','Manutenção de máquinas','Energia e água','Arrendamento','Impostos e taxas','Serviços veterinários','Despesas administrativas','Outros custos']},{k:'desc',l:'Descrição'},{k:'valor',l:'Valor (R$)',t:'number',r:1,pos:1},{k:'status',l:'Situação',o:['Previsto','Efetivado']}]}});
+const COL={
+animals:[['Brinco',x=>x.tag],['Nome',x=>x.name],['Categoria',x=>x.cat],['Sexo',x=>x.sex],['Raça',x=>x.breed],['Nº de registro',x=>x.regNum],['Pelagem',x=>x.coat],['Origem',x=>x.origin],['Entrada na fazenda',x=>x.entry?br(x.entry):''],['Peso (kg)',x=>x.weight],['Lote',x=>x.lot],['Situação',x=>x.status]],
+repro:[['Matriz',x=>x.animal],['Evento',x=>x.tipo],['Data',x=>br(x.date)],['Touro/sêmen',x=>x.touro],['Resultado',x=>x.res],['Parto previsto',prev]],
+sanit:[['Animal/lote',x=>x.animal],['Situação',x=>sanSit(x).l+(sanAnim(x)?' · animal '+sanAnim(x)+' (sem alerta)':'')],['Tipo',x=>x.tipo],['Data',x=>br(x.date)],['Produto',x=>x.produto],['Dose informada',x=>x.dose],['Responsável',x=>x.resp],['Retorno',x=>br(x.retorno)],['Concluído em',x=>x.status==='Concluído'?br(x.conclusao):'—'],['Obs. da conclusão',x=>x.obsConclusao]],
+pasto:[['Fazenda',x=>x.fazenda],['Pasto',x=>x.nome],['Área (ha)',x=>x.area],['Capim',x=>x.capim],['Animais',lot],['Lotação (cab/ha)',x=>x.area>0?f2(lot(x)/x.area):'—'],['Capacidade',x=>x.cap],['Situação',x=>x.cap>0?(lot(x)>x.cap?'Acima da capacidade':'Dentro da capacidade'):'—']],
+estoque:[['Item',x=>x.item],['Categoria',x=>x.cat],['Qtd',x=>(+x.qtd||0)+' '+(x.un||'')],['Mínimo',x=>x.min],['Custo unit.',x=>x.custo?money(x.custo):''],['Fornecedor',x=>x.forn],['Lote',x=>x.lote],['Validade',x=>br(x.val)],['Alerta',alerta]],
+fin:[['Data',x=>br(x.date)],['Tipo',x=>x.tipo],['Categoria',x=>fcat(x)],['Descrição',x=>x.desc],['Valor',x=>money(x.valor)],['Situação',x=>x.status==='Previsto'&&x.date&&x.date<fmt(new Date())?'Previsto (vencido)':x.status]]};
+const RECCAT=['Venda de animais','Venda de produção','Outras receitas'],FCAT={'Frete':'Frete e transporte','Medicamentos':'Medicamentos e vacinas','Suplementos':'Alimentação e suplementos','Manutenção':'Manutenção de máquinas'};
+/* categorias antigas/duplicadas são unificadas só na exibição e nos totais; o registro guardado não é alterado até ser editado */
+const fcat=x=>{const c=String(x.cat||'');return c==='Outros'?(x.tipo==='Receita'?'Outras receitas':'Outros custos'):(FCAT[c]||c)};
+const FK={repro:'tipo',sanit:'tipo',estoque:'cat',fin:'cat'},kpi=(l,v)=>`<div class="card"><b>${v}</b>${l}</div>`;
+const NEWL={pasto:'Novo pasto',estoque:'Novo item',fin:'Novo lançamento'};
+const csOpts=(t,dt)=>[['',dt?'Mais recentes primeiro':'A–Z (1ª coluna)'],...(dt?[['old','Mais antigos primeiro'],['az','A–Z (1ª coluna)']]:[['za','Z–A (1ª coluna)']]),...(t==='fin'?[['vmax','Maior valor'],['vmin','Menor valor']]:[]),...(t==='estoque'?[['qmin','Menor quantidade']]:[]),...(t==='pasto'?[['amax','Maior área']]:[])];
+function crud(t,title,top=''){const q=ui.q.toLowerCase(),C=COL[t],fk=FK[t],E=ENT[t],dt=E.f.some(f=>f.k==='date');
+ const L=S[t].filter(x=>(!q||C.map(c=>c[1](x)).join(' ').toLowerCase().includes(q))&&(!ui.st||(t==='fin'?fcat(x):x[fk])===ui.st)&&(t!=='sanit'||!ui.ss||sanSit(x).k===ui.ss)&&(!ui.from||!x.date||x.date>=ui.from)&&(!ui.to||!x.date||x.date<=ui.to)&&(t!=='fin'||((!ui.from||x.date>=ui.from)&&(!ui.to||x.date<=ui.to))))
+  .sort((a,b)=>{const c0=(x,y)=>String(C[0][1](x)).localeCompare(String(C[0][1](y)),'pt',{numeric:true});switch(ui.cs){case'old':return (a.date||'').localeCompare(b.date||'')||c0(a,b);case'az':return c0(a,b);case'za':return c0(b,a);case'vmax':return (+b.valor||0)-(+a.valor||0);case'vmin':return (+a.valor||0)-(+b.valor||0);case'qmin':return (+a.qtd||0)-(+b.qtd||0);case'amax':return (+b.area||0)-(+a.area||0);default:return dt?((b.date||'').localeCompare(a.date||'')||c0(a,b)):c0(a,b)}});
+ return `<h2>${title}</h2>${top}<div class="bar2"><input id="q" aria-label="Buscar" placeholder="Buscar…" value="${esc(ui.q)}"><select id="cs" aria-label="Ordenar por">${csOpts(t,dt).map(o=>`<option value="${o[0]}"${(ui.cs||'')===o[0]?' selected':''}>Ordenar: ${o[1]}</option>`).join('')}</select>${fk?`<select id="st" aria-label="Filtrar"><option value="">Todas as categorias</option>${E.f.find(f=>f.k===fk).o.map(o=>`<option${ui.st===o?' selected':''}>${o}</option>`).join('')}</select>`:''}${t==='sanit'?`<select id="ss" aria-label="Filtrar por situação"><option value="">Todas as situações</option>${[['pend','Pendente'],['late','Vencido'],['done','Concluído'],['reg','Registrado']].map(o=>`<option value="${o[0]}"${ui.ss===o[0]?' selected':''}>${o[1]}</option>`).join('')}</select>`:''}${dt?`<input type="date" id="from" aria-label="De" value="${ui.from||''}"><input type="date" id="to" aria-label="Até" value="${ui.to||''}">`:''}<button class="pri" data-add="${t}">${NEWL[t]||'Novo registro'}</button></div>
+ <div class="tw"><table><thead><tr>${C.map(c=>`<th>${c[0]}</th>`).join('')}<th></th></tr></thead><tbody>${L.map(x=>`<tr class="${t==='estoque'&&alerta(x)?'warn':''}">${C.map(c=>`<td${t==='sanit'&&c[0]==='Situação'?` class="sit-${sanSit(x).k}"`:''}>${esc(c[1](x))}</td>`).join('')}<td class="act">${t==='estoque'?`<button data-mov="${esc(x.id)}:in">+ Entrada</button><button data-mov="${esc(x.id)}:out">− Saída</button><button data-movs="${esc(x.id)}">Movimentos</button>`:''}${t==='fin'&&x.status==='Previsto'?`<button data-pay="${esc(x.id)}">Efetivar</button>`:''}${t==='sanit'?(x.status==='Concluído'?`<button data-sopen="${esc(x.id)}">Reabrir</button>`:`<button data-sdone="${esc(x.id)}">Concluir</button>`):''}<button data-edit="${t}:${esc(x.id)}">Editar</button><button data-del="${t}:${esc(x.id)}">Excluir</button></td></tr>`).join('')}</tbody></table>${L.length?'':empty('Nenhum registro. Use “'+(NEWL[t]||'Novo registro')+'”.')}</div>`}
+const finSum=L=>{const t=fmt(new Date()),s=(tp,st)=>L.filter(x=>x.tipo===tp&&x.status===st).reduce((a,x)=>a+(+x.valor||0),0),ov=tp=>L.filter(x=>x.tipo===tp&&x.status==='Previsto'&&x.date&&x.date<t).reduce((a,x)=>a+(+x.valor||0),0),r=s('Receita','Efetivado'),d=s('Despesa','Efetivado'),
+ ign=L.filter(x=>!['Receita','Despesa'].includes(x.tipo)||!['Previsto','Efetivado'].includes(x.status)).length;return{r,d,rp:s('Receita','Previsto'),dp:s('Despesa','Previsto'),saldo:r-d,rv:ov('Receita'),dv:ov('Despesa'),ign}};
+function finView(){
+ const L=S.fin.filter(x=>(!ui.st||fcat(x)===ui.st)&&(!ui.from||x.date>=ui.from)&&(!ui.to||x.date<=ui.to)),s=finSum(L),months={},cats={};
+ L.filter(x=>x.status==='Efetivado'&&x.date).forEach(x=>{const k=x.date.slice(0,7);months[k]??={r:0,d:0};months[k][x.tipo==='Receita'?'r':'d']+=(+x.valor||0);if(x.tipo==='Despesa'){const ck=fcat(x)||'Sem categoria';cats[ck]=(cats[ck]||0)+(+x.valor||0)}});
+ const mk=Object.keys(months).sort(),maxM=Math.max(1,...mk.flatMap(k=>[months[k].r,months[k].d])),catRows=Object.entries(cats).sort((a,b)=>b[1]-a[1]),maxC=Math.max(1,...catRows.map(x=>x[1]));
+ const monthly=mk.length?`<div class="fc">${mk.map(k=>`<div class="fm"><small>${k.slice(5)}/${k.slice(0,4)}</small><div class="fb"><i class="r" title="Receitas: ${money(months[k].r)}" style="height:${Math.max(months[k].r?2:0,months[k].r/maxM*100)}%"></i><i class="d" title="Despesas: ${money(months[k].d)}" style="height:${Math.max(months[k].d?2:0,months[k].d/maxM*100)}%"></i></div><small>${money(months[k].r-months[k].d)}</small></div>`).join('')}</div><div class="leg"><span><i style="background:var(--g2)"></i>Receitas</span><span><i style="background:var(--red)"></i>Despesas</span></div>`:empty('Sem lançamentos efetivados no período selecionado.');
+ const breakdown=catRows.length?catRows.map(([c,v])=>`<div class="hb"><span>${esc(c)}</span><div class="tr"><i class="fill" style="width:${v/maxC*100}%"></i></div><b>${money(v)}</b></div>`).join(''):empty('Nenhuma despesa efetivada neste período.');
+ const result=s.saldo<0?'Resultado negativo no período: as despesas efetivadas superam as receitas efetivadas.':s.saldo>0?'Resultado positivo no período: as receitas efetivadas superam as despesas efetivadas.':'Receitas e despesas efetivadas estão iguais no período.';
+ return crud('fin','Financeiro',`${s.ign?`<div class="alert" role="alert">${s.ign} lançamento(s) com tipo ou situação inválidos não entram nos totais. Edite-os para corrigir.</div>`:''}<p class="note2">Registre receitas e despesas com data, categoria, valor e situação. Marque como <b>Efetivado</b> somente quando o dinheiro já entrou ou saiu; use <b>Previsto</b> para compromissos futuros.</p><div class="cards">${kpi('Receitas recebidas',money(s.r))}${kpi('Despesas pagas',money(s.d))}${kpi('Resultado realizado',money(s.saldo))}${kpi('A receber',money(s.rp))}${kpi('A pagar',money(s.dp))}${kpi('Resultado previsto*',money(s.saldo+s.rp-s.dp))}</div><section><h3>Resultado do período</h3><p>${result}</p>${(s.rv||s.dv)?`<p>Atenção: entre os valores previstos, ${money(s.rv)} a receber e ${money(s.dv)} a pagar estão com a data já vencida e ainda não foram efetivados.</p>`:''}<small>*Projeção simples: saldo realizado + valores previstos a receber − valores previstos a pagar. Considera apenas os lançamentos cadastrados.</small></section><div class="two"><section><h3>Fluxo de caixa mensal</h3>${monthly}</section><section><h3>Onde estão os custos?</h3>${breakdown}</section></div><section><h3>Como interpretar os números</h3><p><b>Resultado realizado</b> = receitas efetivadas − despesas efetivadas, respeitando os filtros de período e categoria.</p><p><b>Custo por animal ou por arroba</b> depende de informar todos os custos e a produção do mesmo período. O resultado financeiro sozinho não calcula o custo unitário nem representa necessariamente o lucro contábil.</p></section>`)}
+function finDash(){const s=finSum(S.fin);return S.fin.length?`<p>Resultado realizado (recebido − pago): <b>${money(s.saldo)}</b></p><p>Receitas recebidas: ${money(s.r)}<br>Despesas pagas: ${money(s.d)}</p><p class="note2">Previstos, ainda não efetivados: a receber ${money(s.rp)} e a pagar ${money(s.dp)}${(s.rv||s.dv)?` (já vencidos: ${money(s.rv)} a receber e ${money(s.dv)} a pagar)`:''}.</p><small class="note2">Soma de todos os lançamentos cadastrados; para um período, use Financeiro ou Análises.${s.ign?' '+s.ign+' lançamento(s) com tipo ou situação inválidos ficam fora das somas.':''}</small>`:empty('Sem lançamentos. Use o módulo Financeiro.')}
+function alerts(){const t=fmt(new Date()),a=[],e=S.estoque.filter(alerta).length,p=partoAlert(t),ss=S.sanit.filter(x=>!sanAnim(x)).map(sanSit),late=ss.filter(v=>v.k==='late').length,r=ss.filter(v=>v.k==='pend'&&v.due&&v.due<=addD(t,7)).length;
+ const rm=S.events.filter(x=>x.status!=='Concluído'&&+x.remind>0&&x.date>=t&&t>=addD(x.date,-(+x.remind)));
+ if(rm.length)a.push('Lembrete: '+rm.slice(0,3).map(x=>esc(x.title)+' ('+br(x.date)+')').join(', ')+(rm.length>3?' e mais '+(rm.length-3):''));if(e)a.push(e+' item(ns) de estoque em alerta (baixo ou vencimento)');if(p)a.push(p+' parto(s) previsto(s) nos próximos 30 dias (estimativa)');if(late)a.push(late+' procedimento(s) sanitário(s) vencido(s) e ainda não concluído(s)');if(r)a.push(r+' procedimento(s)/retorno(s) sanitário(s) pendente(s) com prazo nos próximos 7 dias');return a.map(m=>`<div class="alert">${m}</div>`).join('')}
+const CALC=[
+['Kg em arrobas',[['pv','Peso vivo (kg)'],['rc','Rendimento de carcaça (%)',52]],'1 arroba de carcaça = 15 kg. Peso vivo não é peso de carcaça: o rendimento é uma premissa sua.',v=>{const c=v.pv*v.rc/100;return `Carcaça ≈ ${f2(c)} kg = ${f2(c/15)} @`}],
+['Ganho médio diário (GMD)',[['pi','Peso inicial (kg)'],['pf','Peso final (kg)'],['d','Dias entre as pesagens']],'Usa peso vivo nas duas pesagens.',v=>v.d>0?`GMD = ${f2((v.pf-v.pi)/v.d,3)} kg/dia`:'Os dias devem ser maiores que zero.'],
+['Lotação',[['cab','Cabeças'],['ha','Área (ha)'],['pm','Peso médio (kg)',450]],'1 UA = 450 kg de peso vivo (convenção).',v=>v.ha>0?`${f2(v.cab/v.ha)} cab/ha, ${f2(v.cab*v.pm/450/v.ha)} UA/ha`:'A área deve ser maior que zero.'],
+['Projeção de peso',[['pa','Peso atual (kg)'],['g','GMD informado (kg/dia)'],['d','Dias'],['rc','Rendimento de carcaça (%)',52]],'Supõe GMD constante; é uma projeção, não garantia.',v=>{const p=v.pa+v.g*v.d;if(!(p>0))return 'A projeção resulta em peso zero ou negativo; revise os dados.';return `Peso vivo ≈ ${f2(p)} kg; carcaça ≈ ${f2(p*v.rc/100)} kg (${f2(p*v.rc/1500)} @)`}],
+['Custo por animal',[['ct','Custo total (R$)'],['na','Nº de animais'],['d','Dias do período']],'Divide o custo informado; inclua todos os custos que quiser considerar.',v=>v.na>0&&v.d>0?`${money(v.ct/v.na)} por animal, ${money(v.ct/v.na/v.d)} por animal/dia`:'Animais e dias devem ser maiores que zero.'],
+['Custo por arroba produzida',[['ct','Custo total (R$)'],['na','Nº de animais'],['pi','Peso vivo inicial (kg)'],['pf','Peso vivo final (kg)'],['rc','Rendimento de carcaça (%)',52]],'@ produzidas = ganho de peso vivo × rendimento ÷ 15. É uma estimativa; o peso de carcaça real só se conhece no abate.',v=>{const a=(v.pf-v.pi)*v.rc/100/15*v.na;return a>0?`${f2(a)} @ produzidas; custo ≈ ${money(v.ct/a)} por @`:'Dados insuficientes (ganho de peso deve ser positivo).'}]];
+const calcView=()=>`<h2>Calculadoras rurais</h2><div class="two">${CALC.map((c,i)=>`<section><h3>${c[0]}</h3>${c[1].map(f=>`<label>${f[1]}<input data-c="${i}" data-id="${f[0]}" inputmode="decimal" value="${f[2]??''}"></label>`).join('')}<p><b id="o${i}"></b></p><small>${c[2]}</small></section>`).join('')}</div>`;
+function runCalc(i){const c=CALC[i],v={},o=$('#o'+i);document.querySelectorAll(`[data-c="${i}"]`).forEach(e=>v[e.dataset.id]=num(e.value));
+ if(!c[1].every(f=>isFinite(v[f[0]]))){o.textContent='Preencha os campos.';return}
+ if(c[1].some(f=>v[f[0]]<0&&!(i===3&&f[0]==='g'))){o.textContent='Use apenas valores positivos.';return}
+ if(v.rc!==undefined&&(v.rc<=0||v.rc>100)){o.textContent='O rendimento de carcaça deve ficar entre 0 e 100%.';return}
+ o.textContent=c[3](v)}
+/* histórico de reprodução ligado a animais arquivados, não ativos ou sem cadastro */
+const reproHist=R=>{let arq=0,inat=0,nc=0;R.forEach(x=>{const k=nrm(x.animal),a=S.animals.find(v=>nrm(v.tag)===k);if(a){if(a.status!=='Ativo')inat++}else if((S.excluidos||[]).some(e=>e.animal&&nrm(e.animal.tag)===k))arq++;else nc++});return{arq,inat,nc}};
+const histTxt=h=>(h.arq||h.inat||h.nc)?'Inclui '+[h.arq?h.arq+' registro(s) de animais arquivados (excluídos)':'',h.inat?h.inat+' de animais não ativos (vendidos, mortos ou transferidos)':'',h.nc?h.nc+' de matrizes sem cadastro no Rebanho':''].filter(Boolean).join(', ')+', porque são fatos históricos.':'';
+const REP={rebanho:['Rebanho',()=>S.animals,COL.animals,'status','animals'],repro:['Reprodução',()=>S.repro,COL.repro,'tipo','repro'],sanit:['Sanidade',()=>S.sanit,COL.sanit,'tipo','sanit'],
+pesagens:['Pesagens',()=>S.animals.flatMap(a=>(a.weights||[]).map(w=>({animal:a.tag,date:w.date,kg:w.kg,lot:lotName(a)}))),[['Animal',x=>x.animal],['Data',x=>br(x.date)],['Peso (kg)',x=>x.kg],['Lote',x=>x.lot]],null],
+pasto:['Pastagens',()=>S.pasto,COL.pasto,null],estoque:['Estoque',()=>S.estoque,COL.estoque,'cat','estoque'],fin:['Financeiro',()=>S.fin,COL.fin,'cat','fin']};
+ui.rep='rebanho';ui.af={from:'',to:'',lot:'',cat:'',animal:'',fcat:'',fstat:'Efetivado'};ui.at='graf';
+function repRows(){const R=REP[ui.rep],q=ui.q.toLowerCase(),c0=R[2][0][1];return{cols:R[2],L:R[1]().slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')||String(c0(a)).localeCompare(String(c0(b)),'pt',{numeric:true})).filter(x=>(!ui.from||!x.date||x.date>=ui.from)&&(!ui.to||!x.date||x.date<=ui.to)&&(!ui.st||!R[3]||x[R[3]]===ui.st)&&(!q||R[2].map(c=>c[1](x)).join(' ').toLowerCase().includes(q)))}}
+function relView(){const R=REP[ui.rep],{cols,L}=repRows(),fo=R[3]&&(R[4]==='animals'?ST:ENT[R[4]].f.find(f=>f.k===R[3]).o);
+ return `<h2>Relatórios</h2><div class="bar2"><select id="rep" aria-label="Relatório">${Object.entries(REP).map(([k,v])=>`<option value="${k}"${k===ui.rep?' selected':''}>${v[0]}</option>`).join('')}</select>${fo?`<select id="st" aria-label="Filtrar"><option value="">Todos</option>${fo.map(o=>`<option${ui.st===o?' selected':''}>${o}</option>`).join('')}</select>`:''}${['repro','sanit','pesagens','fin'].includes(ui.rep)?`<input type="date" id="from" aria-label="De" value="${ui.from||''}"><input type="date" id="to" aria-label="Até" value="${ui.to||''}">`:''}<input id="q" class="rep-q" aria-label="Buscar" placeholder="Buscar (lote, categoria…)" value="${esc(ui.q)}"></div>
+ <div class="bar2"><button class="pri" data-act="csv">Exportar CSV</button><button data-act="print">Imprimir</button><span>${L.length} registro(s)</span></div>
+ <h3>${R[0]} — ${br(fmt(new Date()))}</h3><p class="rnote">${repNote(ui.rep,L)}</p><div class="tw"><table><thead><tr>${cols.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead><tbody>${L.map(x=>`<tr>${cols.map(c=>`<td>${esc(c[1](x))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${repFoot(ui.rep,L)}`}
+function repNote(k,L){const f={rebanho:'Todos os animais cadastrados, em qualquer situação (ativo, vendido, morto, transferido). Animais arquivados (excluídos) não entram; veja Rebanho › Animais excluídos. Peso em kg (peso vivo, última pesagem registrada).',
+  repro:'Registros de reprodução na ordem do mais recente. “Parto previsto” é uma <b>estimativa</b>: data do evento + '+gest()+' dias, só para matrizes ativas, sem parto registrado e sem diagnóstico negativo posterior. '+histTxt(reproHist(L)),
+  sanit:'Situação: Pendente, Vencido (prazo anterior a hoje), Concluído ou Registrado (sem pendência). Registros de animais inativos ou arquivados continuam listados, mas não geram alertas.',
+  pesagens:'Uma linha por pesagem de cada animal cadastrado. Peso vivo em kg. Pesagens de animais arquivados (excluídos) ficam fora.',
+  pasto:'Lotação = animais ativos ligados ao pasto ÷ área em hectares (cab/ha). Capacidade informada por você.',
+  estoque:'Quantidades na unidade de cada item. Alerta: quantidade igual ou abaixo do mínimo, ou validade em até 30 dias.',
+  fin:'Valores em R$. <b>Efetivado</b> = já recebido ou pago; <b>Previsto</b> = ainda não efetivado (vencido quando a data já passou). Os totais abaixo separam as duas situações.'};return f[k]||''}
+function repFoot(k,L){if(k==='fin'){const s=finSum(L);return `<p class="rnote"><b>Totais da lista filtrada.</b> Efetivado: receitas ${money(s.r)}, despesas ${money(s.d)}, resultado ${money(s.saldo)}. Previsto (não efetivado): a receber ${money(s.rp)}, a pagar ${money(s.dp)}${(s.rv||s.dv)?`; já vencidos: ${money(s.rv)} a receber e ${money(s.dv)} a pagar`:''}.${s.ign?' '+s.ign+' lançamento(s) com tipo ou situação inválidos não entram nas somas.':''}</p>`}
+  if(k==='pesagens'){return `<p class="rnote">${L.length} pesagem(ns) de ${new Set(L.map(x=>nrm(x.animal))).size} animal(is).</p>`}return ''}
+function csv(){const{cols,L}=repRows(),e=s=>{let v=String(s??'');if(/^[=+\-@\t\r]/.test(v)&&!/^-?\d+([.,]\d+)?$/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"'},r=[cols.map(c=>e(c[0])).join(';'),...L.map(x=>cols.map(c=>e(c[1](x))).join(';'))].join('\r\n'),l=document.createElement('a');
+ l.href=URL.createObjectURL(new Blob(['\ufeff'+r],{type:'text/csv;charset=utf-8'}));l.download='relatorio-'+ui.rep+'-'+fmt(new Date())+'.csv';document.body.appendChild(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(l.href),1000)}
+
+/* Pesagem: registro por animal, GMD entre pesagens e resumo por lote (peso vivo) */
+const sortW=a=>(a.weights||[]).map((x,i)=>({...x,i})).sort((x,y)=>x.date.localeCompare(y.date));
+const gmdA=a=>{const w=sortW(a);if(w.length<2)return null;const d=(new Date(w[w.length-1].date)-new Date(w[0].date))/864e5;return d>0?(w[w.length-1].kg-w[0].kg)/d:null};
+function pesView(){const q=ui.q.toLowerCase(),rows=[];
+ S.animals.forEach(a=>{const w=sortW(a);w.forEach((x,k)=>{let g='';if(k>0){const d=(new Date(x.date)-new Date(w[k-1].date))/864e5;if(d>0)g=f2((x.kg-w[k-1].kg)/d,3)}rows.push({a,x,g})})});
+ const L=rows.filter(r=>(!ui.from||r.x.date>=ui.from)&&(!ui.to||r.x.date<=ui.to)&&(!q||[r.a.tag,r.a.name,r.a.lot].join(' ').toLowerCase().includes(q))).sort((p,o)=>o.x.date.localeCompare(p.x.date)||p.a.tag.localeCompare(o.a.tag));
+ const lots={};S.animals.filter(a=>a.status==='Ativo').forEach(a=>{const k=lotName(a),l=lots[k]=lots[k]||{n:0,p:[],g:[]};l.n++;if(+a.weight>0)l.p.push(+a.weight);const g=gmdA(a);if(g!==null)l.g.push(g)});
+ const avg=v=>v.length?v.reduce((x,y)=>x+y,0)/v.length:null;
+ return `<h2>Pesagem</h2><p class="note2">Pesos são de peso vivo. O GMD de cada linha compara com a pesagem anterior do mesmo animal. A pesagem mais recente passa a ser o peso atual no Rebanho.</p>
+ <div class="bar2"><input id="q" aria-label="Buscar" placeholder="Buscar brinco, nome, lote…" value="${esc(ui.q)}"><input type="date" id="from" aria-label="De" value="${ui.from||''}"><input type="date" id="to" aria-label="Até" value="${ui.to||''}"><button class="pri" data-wadd="1">Nova pesagem</button></div>
+ <section class="lots"><h3>Resumo por lote (animais ativos)</h3><div class="tw"><table><thead><tr><th>Lote</th><th>Animais</th><th>Peso médio (kg)</th><th>GMD médio (kg/dia)</th><th>Arrobas de carcaça (total do lote)*</th></tr></thead><tbody>${Object.entries(lots).map(([k,l])=>{const m=avg(l.p),g=avg(l.g);return `<tr><td>${esc(k)}</td><td>${l.n}</td><td>${m===null?'—':f2(m,1)}</td><td>${g===null?'—':f2(g,3)}</td><td>${l.p.length?f2(l.p.reduce((x,y)=>x+y,0)*0.52/15,1):'—'}</td></tr>`}).join('')}</tbody></table>${Object.keys(lots).length?'':empty('Sem animais ativos.')}</div><small>*Estimativa com rendimento de carcaça de 52% (premissa) e 15 kg por arroba. O rendimento real só se conhece no abate.</small></section>
+ <h3>Histórico</h3><div class="tw"><table><thead><tr><th>Data</th><th>Animal</th><th>Lote</th><th>Peso (kg)</th><th>GMD desde a anterior</th><th></th></tr></thead><tbody>${L.map(r=>`<tr><td>${br(r.x.date)}</td><td>${esc(r.a.tag)} ${esc(r.a.name)}</td><td>${esc(lotName(r.a))}</td><td>${esc(r.x.kg)}</td><td>${r.g||'—'}</td><td class="act"><button data-wedit="${esc(r.a.id)}:${r.x.i}">Editar</button><button data-wdel="${esc(r.a.id)}:${r.x.i}">Excluir</button></td></tr>`).join('')}</tbody></table>${L.length?'':empty('Nenhuma pesagem. Use “Nova pesagem”.')}</div>`}
+function weighForm(){const A=S.animals.filter(a=>a.status==='Ativo').sort((a,b)=>a.tag.localeCompare(b.tag,'pt',{numeric:true}));if(!A.length)return toast('Cadastre um animal ativo primeiro.');
+ dlg(`<form id="frm" novalidate><h2>Nova pesagem</h2><div class="grid"><label class="full">Animal *<select id="w_a">${A.map(a=>`<option value="${esc(a.id)}">${esc(a.tag)}${a.name?' — '+esc(String(a.name).length>18?String(a.name).slice(0,17)+'…':a.name):''}</option>`).join('')}</select><small id="w_info" class="note2"></small></label><label>Data *<input id="w_d" type="date" value="${fmt(new Date())}"></label><label>Peso vivo (kg) *<input id="w_k" type="number" step="any" min="0" inputmode="decimal"></label></div><p class="err" id="err"></p><div class="row"><button type="button" data-x>Cancelar</button><button type="button" id="w_more">Salvar e próximo</button><button class="pri">Salvar</button></div></form>`);
+ const upd=()=>{const a=S.animals.find(x=>x.id===$('#w_a').value);if(!a)return;const w=sortW(a),l=w[w.length-1];$('#w_info').textContent=a.tag+(a.name?' — '+a.name:'')+' · lote: '+lotName(a)+(l?' · último peso: '+l.kg+' kg em '+String(l.date).split('-').reverse().join('/'):' · sem pesagens ainda')};
+ $('#w_a').onchange=upd;upd();
+ const go=(more)=>{const a=S.animals.find(x=>x.id===$('#w_a').value),d=$('#w_d').value,k=num($('#w_k').value);if(!d)return err('Informe a data.','w_d');if(!(k>0))return err('Informe um peso maior que zero.','w_k');const chk=wChk(a,d,k);if(chk)return err(chk,/Peso/.test(chk)?'w_k':'w_d');
+  if((a.weights||[]).some(x=>x.date===d&&x.kg===k))return err('Essa pesagem já está registrada.','w_d');
+  const prevW=(a.weights||[]).find(x=>x.date===d);if(prevW&&prevW.kg!==k&&!confirm('Este animal já tem pesagem nesta data ('+prevW.kg+' kg). Substituir por '+k+' kg?'))return;const had=!!prevW,before=JSON.stringify(a.weights),oldWeight=a.weight;a.weights=putW(a.weights,d,k);syncCurrentWeight(a);const saved=save();if(!saved){try{a.weights=JSON.parse(before);a.weight=oldWeight}catch(_){}}if(!saved)return;
+  if(more){const s=$('#w_a');if(s.selectedIndex<s.options.length-1){s.selectedIndex++;s.dispatchEvent(new Event('change'))}$('#w_k').value='';$('#w_k').focus();err('');toast((had?'Pesagem do dia atualizada: ':'Salva: ')+a.tag+' — '+k+' kg.');render()}else{$('#dlg').close();render();toast(had?'Pesagem do dia atualizada.':'Pesagem salva.')}};
+ $('#frm').onsubmit=e=>{e.preventDefault();go(false)};$('#w_more').onclick=()=>go(true)}
+function syncCurrentWeight(a){const w=sortW(a);a.weight=w.length?w[w.length-1].kg:''}
+const wChk=(a,d,k)=>d>fmt(new Date())?'A data da pesagem não pode ser futura.':a.birth&&d<a.birth?'A pesagem não pode ser anterior ao nascimento do animal ('+br(a.birth)+').':k>2000?'Peso acima de 2000 kg: confira o valor.':''
+function weighEdit(id,i){const a=S.animals.find(x=>x.id===id);if(!a)return;const w=(a.weights||[])[+i];if(!w)return;
+ dlg(`<form id="frm" novalidate><h2>Editar pesagem</h2><p>Animal: <b>${esc(a.tag)} ${esc(a.name)}</b></p><div class="grid"><label>Data *<input id="w_d" type="date" value="${esc(w.date)}" required></label><label>Peso vivo (kg) *<input id="w_k" type="number" step="any" min="0.01" inputmode="decimal" value="${esc(w.kg)}" required></label></div><p class="err" id="err"></p><div class="row"><button type="button" data-x>Cancelar</button><button class="pri">Salvar alteração</button></div></form>`);
+ $('#frm').onsubmit=e=>{e.preventDefault();const d=$('#w_d').value,k=num($('#w_k').value);if(!d)return err('Informe a data.','w_d');if(!(k>0))return err('O peso deve ser maior que zero.','w_k');const chk=wChk(a,d,k);if(chk)return err(chk,/Peso/.test(chk)?'w_k':'w_d');if((a.weights||[]).some((x,j)=>j!==+i&&x.date===d))return err('Já existe uma pesagem deste animal nessa data. Edite a pesagem existente para evitar duplicidade.','w_d');
+ const before=JSON.stringify(a.weights);a.weights[+i]={date:d,kg:k};syncCurrentWeight(a);const saved=save();if(!saved){try{a.weights=JSON.parse(before);syncCurrentWeight(a)}catch(_){}}$('#dlg').close();render();if(saved)toast('Pesagem atualizada.')}}
+function weighDel(id,i){const a=S.animals.find(x=>x.id===id);if(!a||!(a.weights||[])[+i])return;if(!confirm('Excluir esta pesagem do histórico?'))return;const before=JSON.stringify(a.weights),oldWeight=a.weight;a.weights.splice(+i,1);syncCurrentWeight(a);const saved=save();if(!saved){try{a.weights=JSON.parse(before);a.weight=oldWeight}catch(_){}}render();if(saved)toast('Pesagem excluída.')}
+
+/* ===== Análises: gráficos e indicadores de reprodução (somente dados cadastrados; HTML/CSS/SVG nativos) ===== */
+const nrm=s=>String(s??'').trim().replace(/\s+/g,' ').toLowerCase(),tagk=x=>nrm(x.animal),mean=v=>v.length?v.reduce((x,y)=>x+y,0)/v.length:null;
+const lotOk=(a,v)=>!v||(v==='__none'?lotName(a)==='(sem lote)':nrm(lotName(a))===nrm(v)),lotName=a=>{if(!a)return '(sem lote)';const p=lotOf(a);return (p?p.nome:String(a.lot||'').trim().replace(/\s+/g,' '))||'(sem lote)'};
+const inP=(d,af)=>!!d&&(!af.from||d>=af.from)&&(!af.to||d<=af.to);
+const aF=(af,act)=>S.animals.filter(a=>(!act||a.status==='Ativo')&&lotOk(a,af.lot)&&(!af.cat||a.cat===af.cat));
+const wIn=(a,af)=>sortW(a).filter(w=>+w.kg>0&&inP(w.date,af)).map(w=>({date:w.date,kg:+w.kg}));
+const ts=d=>Date.parse(d+'T12:00:00Z'),sd=t=>{const d=new Date(t);return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+String(d.getFullYear()).slice(2)};
+const gmdIn=(a,af)=>{const w=wIn(a,af);if(w.length<2)return null;const f=w[0],l=w[w.length-1],d=(ts(l.date)-ts(f.date))/864e5;return d>0?{g:(l.kg-f.kg)/d,d,n:w.length}:null};
+const lastW=(a,af)=>{const w=wIn(a,af);if(w.length)return w[w.length-1].kg;return !(af.from||af.to)&&!(a.weights||[]).length&&+a.weight>0?+a.weight:null};
+const sec=(t,b,n)=>`<section class="rs"><h3>${t}</h3>${b}${n?`<small class="note2">${n}</small>`:''}</section>`;
+const pct=v=>v===null?'—':f2(v,1)+'%';
+function hbars(I,f){const vs=I.map(i=>i.v),lo=Math.min(0,...vs),hi=Math.max(0,...vs),R=(hi-lo)||1;
+ return I.map(i=>`<div class="hb"><span>${esc(i.l)}${i.s?`<small>${esc(i.s)}</small>`:''}</span><div class="tr" role="img" aria-label="${esc(i.l)}: ${esc(f(i.v))}"><i class="fill${i.v<0?' neg':''}" style="left:${(Math.min(0,i.v)-lo)/R*100}%;width:${Math.abs(i.v)/R*100}%"></i></div><b>${f(i.v)}</b></div>`).join('')}
+function lineSvg(P,u){const W=480,H=250,L=48,Rm=14,T=14,B=32;let x0=P[0].t,x1=P[P.length-1].t,y0=Math.min(...P.map(p=>p.y)),y1=Math.max(...P.map(p=>p.y));
+ if(y0===y1){y0-=1;y1+=1}const pd=(y1-y0)*.12;y0-=pd;y1+=pd;if(x0===x1)x1=x0+864e5;
+ const X=v=>L+(v-x0)/(x1-x0)*(W-L-Rm),Y=v=>T+(1-(v-y0)/(y1-y0))*(H-T-B);let g='';
+ for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4,y=Y(v).toFixed(1);g+=`<line x1="${L}" x2="${W-Rm}" y1="${y}" y2="${y}" stroke="#dbe8de"/><text x="${L-6}" y="${(+y+4).toFixed(1)}" text-anchor="end">${f2(v,u==='kg'?0:1)}</text>`}
+ for(let i=0;i<4;i++){const tv=x0+(x1-x0)*i/3;g+=`<text x="${X(tv).toFixed(1)}" y="${H-10}" text-anchor="${i===0?'start':i===3?'end':'middle'}">${sd(tv)}</text>`}
+ return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="Gráfico de linha, eixo vertical em ${u}">${g}<polyline fill="none" stroke="#2e8b57" stroke-width="2.5" points="${P.map(p=>X(p.t).toFixed(1)+','+Y(p.y).toFixed(1)).join(' ')}"/>${P.map(p=>`<circle cx="${X(p.t).toFixed(1)}" cy="${Y(p.y).toFixed(1)}" r="4" fill="#0e3b24"><title>${esc(p.k)}</title></circle>`).join('')}</svg>`}
+const optSel=(id,lab,cur,list,all)=>`<label>${lab}<select id="${id}"><option value="">${all}</option>${list.map(o=>`<option${o===cur?' selected':''}>${esc(o)}</option>`).join('')}</select></label>`;
+
+function anaFilters(){const af=ui.af,lots=[],seen=new Set();S.animals.forEach(a=>{const nm=lotName(a),k=nrm(nm);if(nm!=='(sem lote)'&&!seen.has(k)){seen.add(k);lots.push(nm)}});lots.sort((a,b)=>a.localeCompare(b,'pt',{numeric:true}));
+ const cats=ENT.animals.f.find(f=>f.k==='cat').o,o=(v,l)=>`<option value="${esc(v)}"${v===af.lot?' selected':''}>${esc(l)}</option>`;
+ return `<div class="af"><label>De<input type="date" id="af_from" value="${af.from}"></label><label>Até<input type="date" id="af_to" value="${af.to}"></label>
+ <label>Lote<select id="af_lot">${o('','Todos')}${lots.map(l=>o(l,l)).join('')}${o('__none','(sem lote)')}</select></label>${optSel('af_cat','Categoria do animal',af.cat,cats,'Todas')}</div>
+ <div class="bar2"><span>Período:</span>${[['all','Tudo'],['12','Últimos 12 meses'],['6','Últimos 6 meses'],['ytd','Este ano']].map(p=>`<button data-pre="${p[0]}">${p[1]}</button>`).join('')}</div>`}
+function preset(p){const t=new Date(),af=ui.af;af.from=af.to='';if(p!=='all'){af.to=fmt(t);af.from=p==='ytd'?t.getFullYear()+'-01-01':(()=>{const m=new Date(t.getFullYear(),t.getMonth()-(+p),1),ult=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();m.setDate(Math.min(t.getDate(),ult));return fmt(m)})()}render()}
+
+function evoSec(af){const A=aF(af,false).filter(a=>wIn(a,af).length),sel=A.find(a=>a.id===af.animal);let P=[],cap;
+ if(sel){P=wIn(sel,af).map(w=>({t:ts(w.date),y:w.kg,k:br(w.date)+': '+w.kg+' kg'}));cap='Peso vivo do animal '+esc(sel.tag)}
+ else{const g={};A.forEach(a=>wIn(a,af).forEach(w=>{const k=w.date.slice(0,7),o=g[k]=g[k]||{t:[],y:[],a:new Set()};o.t.push(ts(w.date));o.y.push(w.kg);o.a.add(a.id)}));
+  P=Object.keys(g).sort().map(k=>({t:mean(g[k].t),y:mean(g[k].y),k:k.slice(5)+'/'+k.slice(0,4)+': média '+f2(mean(g[k].y),1)+' kg ('+g[k].y.length+' pesagens, '+g[k].a.size+' animais)'}));cap='Peso médio mensal (kg) do grupo filtrado'}
+ const pick=`<div class="af">${`<label>Animal<select id="af_animal"><option value="">Média do grupo</option>${A.map(a=>`<option value="${esc(a.id)}"${sel&&sel.id===a.id?' selected':''}>${esc(a.tag)} ${esc(a.name)}</option>`).join('')}</select></label>`}</div>`;
+ const body=!A.length?empty('Sem dados: não há pesagens no período e grupo selecionados. Registre no módulo Pesagem.'):P.length<2?empty(sel?'Dados insuficientes: este animal precisa de 2 pesagens no período.':'Dados insuficientes: o gráfico da média precisa de pesagens em pelo menos 2 meses diferentes. Escolha um animal com 2 ou mais pesagens ou amplie o período.'):`<p><b>${cap}</b></p>${lineSvg(P,'kg')}`;
+ return sec('Evolução do peso ao longo do tempo',pick+body,'Usa todas as pesagens do período, de animais de qualquer situação. A média mensal pode variar porque nem sempre os mesmos animais são pesados; escolha um animal para ver a evolução individual. Eixo do tempo proporcional às datas.')}
+function gmdSec(af){const A=aF(af,false),R=A.map(a=>({a,g:gmdIn(a,af)})).filter(r=>r.g),F='GMD = (peso final − peso inicial) ÷ dias entre a primeira e a última pesagem do animal dentro do período (peso vivo). O GMD do lote é a média simples dos GMD dos animais do lote com GMD calculável. Inclui animais de qualquer situação (também vendidos, mortos ou transferidos); animais arquivados (excluídos) ficam fora.';
+ if(!R.length)return sec('Ganho médio diário (GMD)',empty('Dados insuficientes: cada animal precisa de 2 pesagens em datas diferentes dentro do período e grupo selecionados.'),F);
+ const L={};R.forEach(r=>(L[lotName(r.a)]=L[lotName(r.a)]||[]).push(r.g.g));const f=v=>f2(v,3)+' kg/dia',ani=[...R].sort((x,y)=>y.g.g-x.g.g);
+ return sec('Ganho médio diário (GMD)',`<h4>Por lote</h4>${hbars(Object.entries(L).map(([k,v])=>({l:k,v:mean(v),s:v.length+' animal(is)'})).sort((a,b)=>b.v-a.v),f)}<h4>Por animal${ani.length>30?' (30 maiores de '+ani.length+')':''}</h4>${hbars(ani.slice(0,30).map(r=>({l:r.a.tag+(r.a.name?' '+r.a.name:''),v:r.g.g,s:f2(r.g.d,0)+' dias, '+r.g.n+' pesagens'})),f)}${A.length>R.length?`<p class="note2">${A.length-R.length} animal(is) do filtro sem GMD calculável (menos de 2 pesagens em datas diferentes).</p>`:''}`,F)}
+function lotSec(af){const G={};aF(af,true).forEach(a=>{const w=lastW(a,af);if(w!==null)(G[lotName(a)]=G[lotName(a)]||[]).push(w)});const K=Object.keys(G),F='Considera animais ativos e, para cada um, a pesagem mais recente dentro do período (sem período: a mais recente). Peso médio do lote = média simples desses pesos vivos.';
+ if(!K.length)return sec('Peso médio por lote',empty('Sem dados: nenhum animal ativo com peso no período e grupo selecionados.'),F);
+ return sec('Peso médio por lote (comparação)',hbars(K.map(k=>({l:k,v:mean(G[k]),s:G[k].length+' animal(is)'})).sort((a,b)=>b.v-a.v),v=>f2(v,1)+' kg')+(K.length<2?'<p class="note2">Só há um lote com peso informado; a comparação precisa de 2 ou mais lotes.</p>':''),F)}
+function finSec(af){const L=S.fin.filter(x=>inP(x.date,af)&&(!af.fcat||fcat(x)===af.fcat)&&(af.fstat==='Todos'||x.status===af.fstat)),m={};
+ const pick=`<div class="af">${optSel('af_fcat','Categoria financeira',af.fcat,ENT.fin.f.find(f=>f.k==='cat').o,'Todas')}<label>Situação<select id="af_fstat">${['Efetivado','Previsto','Todos'].map(o=>`<option${o===af.fstat?' selected':''}>${o}</option>`).join('')}</select></label></div>`,F='Saldo = receitas − despesas dos lançamentos do período, na situação e categoria escolhidas. Lote e categoria do animal não se aplicam ao Financeiro (os lançamentos não têm vínculo com animais).';
+ if(!L.length)return sec('Receitas, despesas e saldo',pick+empty('Sem lançamentos no período, categoria e situação selecionados.'),F);
+ let r=0,d=0;L.forEach(x=>{const k=x.date.slice(0,7),o=m[k]=m[k]||{r:0,d:0},v=+x.valor||0;if(x.tipo==='Receita'){o.r+=v;r+=v}else{o.d+=v;d+=v}});
+ const ks=Object.keys(m).sort(),mx=Math.max(1,...ks.map(k=>Math.max(m[k].r,m[k].d)));
+ const sl=af.fstat==='Todos'?'(efetivadas e previstas)':af.fstat==='Efetivado'?'(efetivadas)':'(previstas)',vs=(tp,st)=>money(L.filter(x=>x.tipo===tp&&x.status===st).reduce((a,x)=>a+(+x.valor||0),0));
+  return sec('Receitas, despesas e saldo',pick+`<div class="cards">${kpi('Receitas '+sl,money(r))}${kpi('Despesas '+sl,money(d))}${kpi('Saldo '+sl,money(r-d))}</div>${af.fstat==='Todos'?`<p class="rnote">Soma <b>efetivados</b> e <b>previstos</b>. Efetivado: receitas ${vs('Receita','Efetivado')}, despesas ${vs('Despesa','Efetivado')}. Previsto: receitas ${vs('Receita','Previsto')}, despesas ${vs('Despesa','Previsto')}.</p>`:af.fstat==='Previsto'?'<p class="rnote">Somente valores <b>previstos</b> (ainda não recebidos nem pagos): não são caixa realizado.</p>':''}<div class="leg"><span><i style="background:var(--g2)"></i>Receitas</span><span><i style="background:var(--red)"></i>Despesas</span></div>
+ <div class="fc">${ks.map(k=>`<div class="fm"><div class="fb" role="img" aria-label="${k.slice(5)}/${k.slice(0,4)}: receitas ${money(m[k].r)}, despesas ${money(m[k].d)}"><i class="r" style="height:${m[k].r/mx*100}%" title="Receitas ${money(m[k].r)}"></i><i class="d" style="height:${m[k].d/mx*100}%" title="Despesas ${money(m[k].d)}"></i></div><small>${k.slice(5)}/${k.slice(2,4)}</small></div>`).join('')}</div>
+ <div class="tw"><table><thead><tr><th>Mês</th><th>Receitas</th><th>Despesas</th><th>Saldo</th></tr></thead><tbody>${ks.map(k=>`<tr><td>${k.slice(5)}/${k.slice(0,4)}</td><td>${money(m[k].r)}</td><td>${money(m[k].d)}</td><td>${money(m[k].r-m[k].d)}</td></tr>`).join('')}</tbody></table></div>`,F)}
+
+/* Reprodução: filtro e cálculo */
+const COV=['Cobertura (monta natural)','Inseminação artificial','IATF'],amap=()=>new Map(S.animals.map(a=>[nrm(a.tag),a]));
+function rFiltered(af){const m=amap(),act=!!(af.lot||af.cat);let skipped=0;
+ const R=S.repro.filter(x=>{if(!inP(x.date,af))return false;if(act){const a=m.get(tagk(x));if(!a){skipped++;return false}if(!lotOk(a,af.lot)||(af.cat&&a.cat!==af.cat))return false}return true});return{R,skipped}}
+function rCalc(R){const dg={},cov=new Set(),pt=new Map(),dm=new Map();
+ R.forEach(x=>{const k=tagk(x);if(!k)return;
+  if(COV.includes(x.tipo))cov.add(k);
+  else if(x.tipo==='Diagnóstico de gestação'){const o=dg[k]=dg[k]||{c:null,p:0,cf:0};if(x.res==='Prenhe'||x.res==='Vazia'){if(!o.c||x.date>o.c.date){o.c=x;o.cf=0}else if(x.date===o.c.date&&x.res!==o.c.res)o.cf=1}else o.p=1}
+  else if(x.tipo==='Parto/nascimento')pt.set(k+'|'+x.date+'|'+x.res,x);
+  else if(x.tipo==='Desmama')dm.set(k+'|'+x.date+'|'+(x.res||'—'),x)});
+ let pos=0,neg=0,pend=0,conf=0;Object.values(dg).forEach(o=>{if(o.c&&o.cf)conf++;else if(o.c){o.c.res==='Prenhe'?pos++:neg++}else pend++});
+ let vivo=0,nati=0,psr=0,des=0,dinc=0;pt.forEach(x=>{x.res==='Nasceu vivo'?vivo++:x.res==='Natimorto'?nati++:psr++});dm.forEach(x=>{(!x.res||x.res==='—'||x.res==='Desmamado')?des++:dinc++});
+ const av=pos+neg;return{exp:cov.size,pos,neg,pend,conf,av,semDiag:[...cov].filter(k=>!dg[k]).length,vivo,nati,psr,des,dinc,tp:av?pos/av*100:null,td1:cov.size?des/cov.size*100:null,td2:vivo?des/vivo*100:null,total:R.length}}
+const ind=(t,v,n,fx,w)=>`<div class="ind"><h4>${t}</h4><b>${v}</b><small>${n}</small><small class="fx">${fx}</small>${w?`<small class="w">${w}</small>`:''}</div>`;
+const wn=(n,r)=>[n===0?'Sem base de cálculo no período e grupo selecionados.':n<10?`Base pequena (${n} animais): interpretar com cautela.`:'',r>100?'Acima de 100%: o período contém desmamas de bezerros nascidos fora dele, ou faltam registros.':''].filter(Boolean).join(' ');
+const hrow=(l,c)=>`<tr><td>${esc(l)}</td><td>${c.exp}</td><td>${c.av}</td><td>${c.pos}</td><td>${c.neg}</td><td>${c.pend}</td><td>${c.tp===null?'—':pct(c.tp)}</td><td>${c.vivo}</td><td>${c.nati}</td><td>${c.des}</td></tr>`;
+const hhead=l=>`<div class="tw"><table><thead><tr><th>${l}</th><th>Matrizes expostas</th><th>Avaliadas</th><th>Positivas</th><th>Negativas</th><th>Pendentes</th><th>Taxa de prenhez</th><th>Nasc. vivos</th><th>Natimortos</th><th>Desmamados</th></tr></thead><tbody>`;
+function repView(af){const{R,skipped}=rFiltered(af);
+ const extra=skipped?`<div class="alert">${skipped} registro(s) de reprodução ficaram de fora porque a matriz não está no Rebanho (foi arquivada ou nunca foi cadastrada), e sem o cadastro não dá para aplicar o filtro de lote ou categoria.</div>`:'';
+ if(!R.length)return extra+empty('Nenhum registro de reprodução no período e grupo selecionados. Os indicadores usam os registros do módulo Reprodução; nada é estimado.');
+ const c=rCalc(R),m=amap(),M={},Lt={};R.forEach(x=>{(M[x.date.slice(0,7)]=M[x.date.slice(0,7)]||[]).push(x);const a=m.get(tagk(x)),k=a?lotName(a):'(matriz arquivada ou sem cadastro)';(Lt[k]=Lt[k]||[]).push(x)});
+ const ht=histTxt(reproHist(R)),hx=ht?`<p class="rnote"><b>Histórico:</b> ${ht}</p>`:'';
+ return extra+hx+`<div class="inds">
+ ${ind('Taxa de prenhez (por diagnóstico)',pct(c.tp),`${c.pos} positiva(s) de ${c.av} matriz(es) avaliada(s)`,'Fórmula: matrizes com diagnóstico positivo ÷ (positivas + negativas) × 100. Cada matriz conta uma vez, pelo diagnóstico conclusivo mais recente do período. Pendentes e conflitantes ficam de fora.',wn(c.av,0))}
+ ${ind('Matrizes avaliadas',c.av,'base da taxa de prenhez','Matrizes distintas com diagnóstico conclusivo (Prenhe ou Vazia) no período.')}
+ ${ind('Diagnósticos positivos',c.pos,'matrizes','Matrizes cujo diagnóstico conclusivo mais recente é “Prenhe”.')}
+ ${ind('Diagnósticos negativos',c.neg,'matrizes','Matrizes cujo diagnóstico conclusivo mais recente é “Vazia”.')}
+ ${ind('Diagnósticos pendentes',c.pend,`matrizes com diagnóstico sem resultado${c.conf?'; '+c.conf+' com resultados conflitantes no mesmo dia (fora do cálculo)':''}`,'Pendente não conta como positivo nem negativo. Além disso, '+c.semDiag+' matriz(es) coberta(s) no período ainda não têm diagnóstico registrado.')}
+ ${ind('Matrizes expostas',c.exp,'cobertas, inseminadas ou IATF','Matrizes distintas com Cobertura, Inseminação artificial ou IATF no período.')}
+ ${ind('Bezerros nascidos vivos',c.vivo,`${c.nati} natimorto(s); ${c.psr} parto(s) sem resultado informado (não contados como vivos)`,'Registros “Parto/nascimento” com resultado “Nasceu vivo”; 1 registro = 1 bezerro. Registros idênticos (mesma matriz, data e resultado) contam uma vez.')}
+ ${ind('Bezerros desmamados',c.des,c.dinc?c.dinc+' registro(s) de desmama com resultado incompatível ignorado(s)':'registros de desmama no período','Registros “Desmama” com resultado “Desmamado” ou sem resultado; registros idênticos contam uma vez.')}
+ ${ind('Taxa de desmama (ref.: matrizes expostas)',pct(c.td1),`${c.des} desmamado(s) ÷ ${c.exp} matriz(es) exposta(s)`,'Fórmula: bezerros desmamados ÷ matrizes expostas no mesmo período × 100.',wn(c.exp,c.td1||0))}
+ ${ind('Taxa de desmama (ref.: nascidos vivos)',pct(c.td2),`${c.des} desmamado(s) ÷ ${c.vivo} nascido(s) vivo(s)`,'Fórmula: bezerros desmamados ÷ bezerros nascidos vivos no mesmo período × 100.',wn(c.vivo,c.td2||0))}</div>
+ <p class="note2">A taxa de prenhez mede o resultado do diagnóstico entre as matrizes avaliadas. A taxa de desmama mede os bezerros desmamados em relação a um grupo de referência (matrizes expostas ou nascidos vivos) e não depende de diagnóstico. Dados ausentes nunca são tratados como resultado negativo.</p>
+ ${sec('Histórico por mês',hhead('Mês')+Object.keys(M).sort().map(k=>hrow(k.slice(5)+'/'+k.slice(0,4),rCalc(M[k]))).join('')+'</tbody></table></div>','Cada linha refaz o cálculo só com os registros do próprio mês; por isso uma matriz pode aparecer em meses diferentes e a soma das linhas não precisa coincidir com os indicadores do período inteiro.')}
+ ${sec('Histórico por lote',hhead('Lote')+Object.keys(Lt).sort((a,b)=>a.localeCompare(b,'pt',{numeric:true})).map(k=>hrow(k,rCalc(Lt[k]))).join('')+'</tbody></table></div>','O lote é o lote atual da matriz no Rebanho (o sistema não guarda o histórico de trocas de lote).')}`}
+
+function movSec(af){const A=aF(af,false),{R}=rFiltered(af),c=rCalc(R.filter(x=>x.tipo==='Parto/nascimento')),ex=s=>A.filter(a=>a.status===s&&inP(a.exit,af)).length,noD=A.filter(a=>a.status!=='Ativo'&&!a.exit).length;
+ const fv=k=>S.fin.filter(x=>fcat(x)===k&&x.status==='Efetivado'&&inP(x.date,af)),sm=a=>money(a.reduce((s,x)=>s+(+x.valor||0),0)),V=fv('Venda de animais'),C=fv('Compra de animais');
+ const I=[{l:'Nascimentos (data de nascimento no cadastro)',v:A.filter(a=>inP(a.birth,af)).length},{l:'Partos: nasceram vivos (Reprodução)',v:c.vivo},{l:'Partos: natimortos (Reprodução)',v:c.nati},{l:'Vendas (situação Vendido)',v:ex('Vendido')},{l:'Mortes',v:ex('Morto')},{l:'Transferências',v:ex('Transferido')},{l:'Vendas de animais lançadas no Financeiro',v:V.length,s:sm(V)},{l:'Compras de animais lançadas no Financeiro',v:C.length,s:sm(C)}];
+ const F='Nascimentos, vendas, mortes e transferências do cadastro usam a data de nascimento e a data de saída do animal. Lote e categoria filtram o rebanho e os partos; o Financeiro não tem vínculo com animais e só filtra por período (lançamentos efetivados).';
+ const w=noD?`<p class="note2">${noD} animal(is) com situação diferente de Ativo estão sem data de saída e não entram em nenhum período. Edite o animal e informe a data de saída.</p>`:'';
+ return sec('Movimentações do rebanho',I.some(i=>i.v)?hbars(I,v=>String(v))+w:empty('Nenhuma movimentação registrada no período e grupo selecionados.')+w,F)}
+function anaView(){const af=ui.af,t=ui.at;
+ return `<h2>Análises</h2><p class="note2">Gráficos e indicadores calculados só com os dados cadastrados. Onde faltam dados, a tela avisa em vez de estimar. Animais arquivados (excluídos) não entram nos gráficos de peso e GMD; nos indicadores de reprodução entram como histórico, e a tela informa quando isso acontece.</p>${anaFilters()}
+ <div class="tabs"><button data-tab="graf" aria-pressed="${t!=='rep'}">Gráficos</button><button data-tab="rep" aria-pressed="${t==='rep'}">Indicadores de reprodução</button></div>
+ ${t==='rep'?repView(af):[evoSec(af),gmdSec(af),lotSec(af),finSec(af),movSec(af)].join('')}`}
+
+function reproOverview(){
+ const R=S.repro.filter(x=>x&&x.animal&&x.date),O=openSvc(),due=dueList(),confirmed=O.filter(o=>o.conf).length,
+ births=R.filter(x=>x.tipo==='Parto/nascimento').length,weans=R.filter(x=>x.tipo==='Desmama'&&(!x.res||x.res==='—'||x.res==='Desmamado')).length;
+ return `<div class="cards">${kpi('Matrizes com prenhez confirmada',confirmed)}${kpi('Partos previstos em 30 dias',due.length)}${kpi('Registros de parto',births)}${kpi('Desmamas registradas',weans)}</div>
+ <section><h3>Período de gestação previsto</h3><div class="bar2"><input id="gest" type="number" min="240" max="320" step="1" inputmode="numeric" aria-label="Dias de gestação" value="${gest()}"><button class="pri" data-act="gest">Salvar período</button><button data-act="gest0">Voltar para 285</button></div><p class="note2">Usado só para estimar a data do parto (entre 240 e 320 dias). Os registros de reprodução não são alterados.</p></section>
+ <section><h3>Próximos partos estimados</h3><p class="note2">Estimativa de ${gest()} dias após a última cobertura, inseminação ou IATF da matriz, sem parto registrado e sem diagnóstico negativo posterior, apenas para matrizes ativas no Rebanho (vendidas, mortas, transferidas ou arquivadas não geram previsão). Só é gestação confirmada quando há diagnóstico “Prenhe”; sem diagnóstico é apenas uma previsão. Confirme com acompanhamento veterinário; a data pode variar.</p>
+ ${due.length?`<div class="tw"><table><thead><tr><th>Matriz</th><th>Evento reprodutivo</th><th>Data do evento</th><th>Previsão</th><th>Dias restantes</th><th>Situação</th></tr></thead><tbody>${due.map(o=>`<tr><td>${esc(o.x.animal)}</td><td>${esc(o.x.tipo)}</td><td>${br(o.x.date)}</td><td>${br(o.d)}</td><td>${o.days}</td><td>${o.conf?'Prenhez confirmada (diagnóstico positivo)':'Sem diagnóstico: apenas estimativa'}</td></tr>`).join('')}</tbody></table></div>`:empty('Nenhum parto estimado para os próximos 30 dias com os registros atuais.')}</section>`;
+}
+
+const VIEWS={dash:['Painel',dash],agenda:['Agenda',agenda],notes:['Anotações',notes],animals:['Rebanho',animals],pes:['Pesagem',pesView],
+repro:['Reprodução',()=>reproOverview()+crud('repro','Reprodução',`<p class="note2">Registre cobertura, inseminação/IATF, diagnóstico de gestação, parto e desmama. A previsão de parto usa ${gest()} dias após cobertura/IA/IATF e é apenas uma estimativa. Cadastre primeiro a matriz no Rebanho e use o mesmo brinco em todos os eventos.</p>`)],
+sanit:['Sanidade',()=>crud('sanit','Sanidade','<p class="note2">Marque como <b>Pendente</b> (ou informe um retorno programado) o que ainda precisa ser feito e use <b>Concluir</b> quando for realizado: concluídos não geram alertas e podem ser reabertos. Vencido = pendente com prazo anterior a hoje. Doses e tratamentos devem seguir a orientação do médico-veterinário.</p>')],
+pasto:['Pastagens',()=>crud('pasto','Pastagens e lotes','<p class="note2">Lotação = animais ativos ligados ao pasto, divididos pela área em hectares. Ao digitar no campo Lote do animal um nome de pasto cadastrado, o animal passa a ser ligado ao pasto por um código interno: renomear o pasto atualiza os animais e os registros que o citam. Excluir pede confirmação e mostra o que está associado.</p>')],
+estoque:['Estoque',()=>crud('estoque','Estoque',S.estoque.filter(alerta).length?`<div class="alert">${S.estoque.filter(alerta).length} item(ns) em alerta (linhas destacadas).</div>`:'')],
+fin:['Financeiro',finView],calc:['Calculadoras',calcView],rel:['Relatórios',relView],ana:['Análises',anaView],data:['Dados',data]};
+const staleBanner=()=>stale?`<div class="alert" role="alert"><b>Os dados foram alterados em outra aba.</b> Para não apagar nada, esta aba não salva até ser atualizada. <button class="pri" data-act="reloadstore">Recarregar dados atualizados</button>${dirtyTab?` <button data-act="export">Baixar cópia desta aba</button>`:''}</div>`:'';
+/* recarrega do armazenamento (sem mesclar); só volta ao normal se os dados salvos forem legíveis */
+function reloadStore(){const c=readStore();if(!c.ok)return toast('Não foi possível ler os dados salvos.',5000);let d;
+ if(c.v===null)d=blank();else{try{d=JSON.parse(c.v)}catch(e){d=null}if(!valid(d))return toast('Os dados salvos não puderam ser lidos; esta aba continua bloqueada. Exporte um backup antes de qualquer outra ação.',8000);d=fill(d)}
+ const dd=$('#dlg');if(dd.open){if(dd._dirty&&dd.querySelector('#frm')&&!confirm('Descartar o que foi digitado?'))return;dd._dirty=false;dd.close()}
+ S=d;loadedRaw=c.v;stale=false;dirtyTab=false;OSC=null;render();toast('Dados atualizados com os da outra aba.',4000);const nm=fillMsg(lastFill);if(nm.length)setTimeout(()=>toast('Atenção nos dados salvos: '+nm.join(' '),12000),4200)}
+const recBanner=()=>recovered?`<div class="alert" role="alert"><b>Os dados salvos neste navegador não puderam ser lidos.</b> Nada foi apagado: uma cópia foi guardada. <button data-act="bak">Baixar cópia</button> <button data-act="okrec">Entendi</button></div>`:'';
+function labelResponsiveTables(root){root.querySelectorAll('.tw table').forEach(t=>{const heads=[...t.querySelectorAll('thead tr:last-child th')].map(h=>h.innerText.trim());t.querySelectorAll('tbody tr').forEach(tr=>{[...tr.children].forEach((td,i)=>{if(td.tagName!=='TD')return;if(!td.hasAttribute('data-label'))td.setAttribute('data-label',heads[i]||'');});});});}
+function render(){OSC=null;$('#app').innerHTML=staleBanner()+recBanner()+banner()+VIEWS[view][1]();labelResponsiveTables($('#app'));if(view==='calc')CALC.forEach((_,i)=>runCalc(i));$('#vt').textContent=VIEWS[view][0];const nv=$('#nav nav'),sl=nv.scrollLeft;nv.innerHTML=Object.entries(VIEWS).map(([k,v])=>`<button data-v="${k}" style="min-width:max-content"${k===view?' aria-current="page"':''}>${ICON[k]}<span>${v[0]}</span></button>`).join('');nv.scrollLeft=sl;
+ const cur=nv.querySelector('[aria-current]');if(cur){const r=cur.getBoundingClientRect(),n=nv.getBoundingClientRect();if(r.left<n.left||r.right>n.right)nv.scrollLeft+=r.left-n.left-(n.width-r.width)/2}}
+const sp1=s=>{const i=s.indexOf(':');return[s.slice(0,i),s.slice(i+1)]},spL=s=>{const i=s.lastIndexOf(':');return[s.slice(0,i),s.slice(i+1)]};
+document.addEventListener('click',e=>{const t=e.target.closest('button');if(!t)return;const d=t.dataset;
+ if(d.v){view=d.v;ui.q=ui.st=ui.from=ui.to=ui.ss=ui.cs='';render();window.scrollTo(0,0)}
+ else if(d.add)form(d.add);
+ else if(d.edit){const[a,b]=sp1(d.edit);form(a,b)}
+ else if(d.del){const[a,b]=sp1(d.del);del(a,b)}
+ else if(d.view)viewAnimal(d.view);
+ else if(d.sort){ui.dir=ui.sort===d.sort?-ui.dir:1;ui.sort=d.sort;render()}
+ else if(d.sel){ui.sel=d.sel;render()}
+ else if(d.nav){const k=+d.nav,c=ui.cal;ui.cal=ui.mode==='month'?new Date(c.getFullYear(),c.getMonth()+k,1):new Date(c.getFullYear(),c.getMonth(),c.getDate()+k*(ui.mode==='week'?7:1));if(ui.mode==='day')ui.sel=fmt(ui.cal);render()}
+ else if(d.done){const ok=tx(()=>{const x=S.events.find(v=>v.id===d.done);if(!x)return false;x.status=x.status==='Concluído'?'Pendente':'Concluído'});render()}
+ else if(d.mov){const[id,k]=spL(d.mov),x=S.estoque.find(v=>v.id===id);if(!x)return;const q=num(prompt((k==='in'?'Quantidade que entrou':'Quantidade que saiu')+' ('+(x.un||'unid.')+'):'));if(!(q>0))return;if(k==='out'&&q>(+x.qtd||0)+1e-9)return toast('A saída é maior que o estoque.');
+  const ok=tx(()=>{const c=S.estoque.find(v=>v.id===id);c.qtd=r6((+c.qtd||0)+(k==='in'?q:-q));(c.mov=c.mov||[]).push({date:fmt(new Date()),q:k==='in'?q:-q})});render();if(ok)toast('Movimento registrado.')}
+ else if(d.pay){const x=S.fin.find(v=>v.id===d.pay);if(!x)return;const t=fmt(new Date());if(x.date>t&&!confirm('A data deste lançamento é futura. Efetivar e mudar a data para hoje?'))return;
+  const ok=tx(()=>{const c=S.fin.find(v=>v.id===d.pay);if(!c)return false;c.status='Efetivado';if(c.date>t)c.date=t});render();if(ok)toast('Lançamento efetivado.')}
+ else if(d.movs)movList(d.movs);
+ else if(d.mdel){const[id,i]=spL(d.mdel);movDel(id,+i)}
+ else if(d.sdone)sanitDone(d.sdone);
+ else if(d.sopen)sanitReopen(d.sopen);
+ else if(d.exl)exclList();
+ else if(d.exr)exclRestore(d.exr);
+ else if(d.exd)exclDrop(d.exd);
+ else if(d.pre)preset(d.pre);
+ else if(d.tab){ui.at=d.tab;render()}
+ else if(d.wadd)weighForm();
+ else if(d.wedit){const[a,b]=spL(d.wedit);weighEdit(a,b)}
+ else if(d.wdel){const[a,b]=spL(d.wdel);weighDel(a,b)}
+ else if(d.act)act(d.act)});
+document.addEventListener('keydown',e=>{const t=e.target;if(t&&t.classList&&t.classList.contains('btn')&&(e.key==='Enter'||e.key===' ')){e.preventDefault();const i=document.querySelector('#imp');if(i)i.click()}});
+const srch=t=>{ui.q=t.value;const p=t.selectionStart;render();const i=$('#q');if(i){i.focus();i.setSelectionRange(p,p)}};
+document.addEventListener('input',e=>{if(e.target.dataset.c)return runCalc(+e.target.dataset.c);if(e.target.id==='q'&&!e.isComposing)srch(e.target)});
+document.addEventListener('compositionend',e=>{if(e.target.id==='q')srch(e.target)});
+document.addEventListener('change',e=>{const i=e.target;
+ if(i.id==='sortm'){ui.dir=ui.sort===i.value?-ui.dir:1;ui.sort=i.value;render();return}
+ const PR={from:'to',to:'from',af_from:'af_to',af_to:'af_from'};
+ if(PR[i.id]&&i.value){const isTo=/to$/.test(i.id),oth=$('#'+PR[i.id]),fv=isTo?(oth&&oth.value):i.value,tv=isTo?i.value:(oth&&oth.value);if(fv&&tv&&fv>tv){toast('A data inicial não pode ser depois da data final.');render();return}}
+ if(i.id&&i.id.startsWith('af_')){ui.af[i.id.slice(3)]=i.value;render()}else if(['st','ss','cs','from','to','rep'].includes(i.id)){ui[i.id]=i.value;if(i.id==='rep')ui.st='';render()}else if(i.id==='mode'){ui.mode=i.value;ui.cal=new Date(ui.sel+'T12:00');render()}else if(i.id==='imp'){imp(i.files[0]);i.value=''}});
+/* aviso quando outra aba altera "nelore.v1" (o evento "storage" não dispara na aba que gravou) e ao voltar para a aba */
+const chkStale=()=>{const c=readStore();if(c.ok&&c.v!==loadedRaw)markStale()};
+window.addEventListener('storage',e=>{if(e.storageArea&&e.storageArea!==localStorage)return;if(e.key!==null&&e.key!==KEY)return;chkStale()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)chkStale()});window.addEventListener('focus',chkStale);
+/* ---------- Agro Projeto: rotas por hash (#/dash, #/ana, ...) + voltar/avançar ----------
+   O hash é "#/" + a chave de VIEWS (dash, agenda, notes, animals, pes, repro, sanit, pasto, estoque, fin, calc, rel, ana, data).
+   Só acompanha a variável "view": não lê nem grava dados. */
+(()=>{
+ const key=h=>{const m=/^#\/([a-z]+)$/.exec(h||'');return m&&Object.prototype.hasOwnProperty.call(VIEWS,m[1])?m[1]:null};
+ let last=location.hash;
+ if(location.protocol==='file:')document.querySelectorAll('.agro-back').forEach(a=>a.hidden=true); /* "./" só faz sentido servido pelo site */
+ const k0=key(location.hash);if(k0)view=k0;               /* link direto: define a tela antes do primeiro render() */
+ /* clique no menu: o manipulador original já trocou "view"; aqui só se registra no histórico */
+ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button[data-v]');if(!b)return;
+  const r='#/'+view;if(location.hash===r||(r==='#/dash'&&!location.hash))return;
+  try{history.pushState(null,'',r);last=r}catch(x){}});
+ const onNav=()=>{if(location.hash===last)return;last=location.hash;     /* popstate e hashchange podem disparar juntos */
+  const d=$('#dlg');
+  if(d.open){closeDlg();                                                 /* formulário aberto: pede confirmação se houver texto digitado */
+   if(d.open){try{history.pushState(null,'','#/'+view);last=location.hash}catch(x){}return}}
+  view=key(location.hash)||'dash';ui.q=ui.st=ui.from=ui.to=ui.ss=ui.cs='';render();window.scrollTo(0,0)};
+ window.addEventListener('popstate',onNav);window.addEventListener('hashchange',onNav);
+})();
+render();if(bootMsg.length)toast('Atenção nos dados salvos: '+bootMsg.join(' '),12000);
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+</script>
+</body></html>

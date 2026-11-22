@@ -1,0 +1,22 @@
+:root{--bg:#f4f6f3;--card:#fff;--tx:#1d2a1f;--mu:#5d6b5f;--bd:#dde4dc;--ac:#2f7d3a;--ac2:#8bc34a;--er:#b3261e}
+@media (prefers-color-scheme:dark){:root{--bg:#10150f;--card:#182017;--tx:#e6efe6;--mu:#9fb09f;--bd:#2a362a;--ac:#6fcf7a;--ac2:#8bc34a;--er:#ff8a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--bd);background:var(--card);flex-wrap:wrap}
+.top h1{margin:0;font-size:1.05rem}.top h1 span{color:var(--mu);font-weight:400;font-size:.85rem}
+#who{display:flex;gap:8px;align-items:center;font-size:.8rem;color:var(--mu);min-width:0}#whoMail{overflow:hidden;text-overflow:ellipsis}
+button,.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 12px;border-radius:8px;cursor:pointer;text-decoration:none;display:inline-block}
+button.on,.btn.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+nav{display:flex;gap:6px;padding:10px 16px;overflow-x:auto}
+main{padding:12px 16px 40px;max-width:980px;margin:0 auto}
+.range{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 14px;min-width:0}
+.card h2{margin:0 0 8px;font-size:.95rem}
+.kpi b{display:block;font-size:1.6rem}.kpi span{color:var(--mu);font-size:.8rem}
+.muted{color:var(--mu)}.err{color:var(--er)}
+table{width:100%;border-collapse:collapse;font-size:.88rem}th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--bd)}th:first-child,td:first-child{text-align:left}
+.bars{display:flex;align-items:flex-end;gap:2px;height:110px}.bars i{flex:1;background:var(--ac);border-radius:2px 2px 0 0;min-height:1px;opacity:.9}
+.axis{display:flex;justify-content:space-between;color:var(--mu);font-size:.72rem;margin-top:4px}
+.hb{height:8px;background:var(--bd);border-radius:4px;overflow:hidden;margin-top:3px}.hb i{display:block;height:100%;background:var(--ac)}
+.center{text-align:center;padding:40px 0}
