@@ -1,0 +1,46 @@
+import crypto from 'node:crypto';
+import { createSandbox, check, summary } from './lib.mjs';
+// Sandbox temporária: banco D1 e .dev.vars próprios; o projeto real não é tocado (veja tests/lib.mjs).
+const sb = createSandbox(); sb.migrate();
+const d1 = (sql, json = false) => sb.d1(sql, json);
+const now = Math.floor(Date.now() / 1000), day = o => new Date((now - 4 * 3600 - o * 86400) * 1000).toISOString().slice(0, 10);
+const tok = crypto.randomBytes(32).toString('base64url'), hash = crypto.createHash('sha256').update(tok).digest('hex');
+sb.writeVars({ ADMIN_EMAIL: 'julio@example.com', GOOGLE_CLIENT_ID: 'x', GOOGLE_CLIENT_SECRET: 'y', VISITOR_SALT: 't' });
+const ins = [];
+const ev = (d, type, tool, v, country, dev, val) => ins.push(`(${now - d * 86400},'${day(d)}','${type}',${tool ? `'${tool}'` : 'NULL'},'${v}','${country}','${dev}',${val ?? 'NULL'})`);
+ev(0, 'view', null, 'aaaa', 'BR', 'mobile'); ev(0, 'view', null, 'bbbb', 'BR', 'desktop'); ev(0, 'tool_open', 'tempo-retorno', 'aaaa', 'BR', 'mobile');
+ev(0, 'calc', 'tempo-retorno', 'aaaa', 'BR', 'mobile'); ev(0, 'calc', 'tempo-retorno', 'aaaa', 'BR', 'mobile'); ev(0, 'calc', 'custo-lucro', 'bbbb', 'BR', 'desktop');
+ev(1, 'view', null, 'cccc', 'PT', 'mobile'); ev(1, 'error', 'vacinacao-rebanho', 'cccc', 'PT', 'mobile'); ev(0, 'perf', null, 'aaaa', 'BR', 'mobile', 100); ev(0, 'perf', null, 'bbbb', 'BR', 'desktop', 300);
+ev(40, 'view', null, 'dddd', 'BR', 'mobile');
+d1(`INSERT INTO events (ts,day,type,tool,visitor,country,device,val) VALUES ${ins.join(',')}`);
+d1(`INSERT INTO sessions (token_hash,email,created,last_seen,expires) VALUES ('${hash}','julio@example.com',${now},${now},${now + 3600})`);
+const w = await sb.startWorker();
+const H = { cookie: '__Host-ap_session=' + tok };
+try {
+  check('stats sem sessão → 401', (await fetch(w.base + '/api/admin/stats')).status === 401);
+  check('stats com cookie forjado → 401', (await fetch(w.base + '/api/admin/stats', { headers: { cookie: '__Host-ap_session=zzzz' } })).status === 401);
+  const j = await (await fetch(w.base + '/api/admin/stats?days=7', { headers: H })).json();
+  check('totais: 3 visitantes-dia, 3 views, 3 cálculos, 1 erro', j.totals.visitor_days === 3 && j.totals.views === 3 && j.totals.calcs === 3 && j.totals.errors === 1, JSON.stringify(j.totals));
+  check('exclui evento de 40 dias em janela de 7', j.totals.views === 3);
+  check('série tem 7 dias, hoje com 2 visitantes', j.series.length === 7 && j.series[6].visitors === 2 && j.series[6].calcs === 3);
+  check('ferramenta mais usada: pb com 2 cálculos', j.tools[0].tool === 'tempo-retorno' && j.tools[0].calcs === 2 && j.tools[0].opens === 1);
+  check('dispositivos e países', j.devices.length >= 2 && j.countries[0].country === 'BR');
+  check('performance p50/p95', j.perf.n === 2 && j.perf.p50 === 300 && j.perf.p95 === 300, JSON.stringify(j.perf));
+  check('erros por ferramenta', j.errors[0].tool === 'vacinacao-rebanho' && j.errors[0].n === 1);
+  const j90 = await (await fetch(w.base + '/api/admin/stats?days=9999', { headers: H })).json();
+  check('days limitado a 90 e inclui evento de 40 dias', j90.days === 90 && j90.totals.views === 4);
+  const jx = await (await fetch(w.base + '/api/admin/stats?days=abc', { headers: H })).json();
+  check('days inválido → 7', jx.days === 7);
+  const rt = await (await fetch(w.base + '/api/admin/stats?days=1', { headers: H })).json();
+  check('dia atual isolado (days=1)', rt.totals.views === 2 && rt.realtime >= 2);
+  let r = await fetch(w.base + '/admin/');
+  const html = await r.text(); const csp = r.headers.get('content-security-policy') || '';
+  check('/admin/ serve a página (200)', r.status === 200 && html.includes('Administração'));
+  check('CSP restritiva e sem scripts inline', /script-src 'self'/.test(csp) && !/unsafe-inline/.test(csp) && !/<script>[^<]/.test(html) && !/ on\w+=/.test(html));
+  check('/admin/ não indexável e sem cache', /noindex/.test(html) && r.headers.get('cache-control') === 'no-store' && r.headers.get('x-frame-options') === 'DENY');
+  r = await fetch(w.base + '/admin/admin.js'); check('admin.js e css servidos', r.status === 200 && (await fetch(w.base + '/admin/admin.css')).status === 200);
+  r = await fetch(w.base + '/admin'); check('/admin (sem barra) → 200', r.status === 200);
+  check('app principal sem CSP do admin', !(await fetch(w.base + '/AgroPainel.html')).headers.get('content-security-policy'));
+  check('painel não vaza dados sem login (HTML estático)', !html.includes('visitor') && !html.includes('aaaa'));
+} finally { await w.stop(); await sb.cleanup(); }
+process.exit(summary() ? 1 : 0);
